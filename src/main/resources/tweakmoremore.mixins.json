@@ -1,0 +1,47 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.winapiadmin.tweakmoremore.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "BeaconBlockEntityMixin",
+    "BrewingStandBlockEntityMixin",
+    "BucketItemMixin",
+    "ComposterBlockMixin",
+    "DataComponentTypesMixin",
+    "EnchantmentDefinitionMixin",
+    "ExperienceBottleEntityMixin",
+    "ExperienceDroppingBlockMixin",
+    "ExplosionImplMixin",
+    "GiveCommandMixin",
+    "InventoryMixin",
+    "ItemAccessor",
+    "ItemEnchantmentsComponentBuilderMixin",
+    "ItemEnchantmentsComponentMixin",
+    "ItemEntityMixin",
+    "ItemStackMixin",
+    "LavaFluidMixin",
+    "LivingEntityMixin",
+    "PlayerEntityMixin",
+    "RaidManagerMixin",
+    "RegistryMixin",
+    "SculkBlockMixin",
+    "ServerPlayerMixin",
+    "ServerTickingMixin",
+    "StackWithSlotMixin",
+    "StillLavaFluidMixin",
+    "StillWaterFluidMixin",
+    "ToolTipMixin",
+    "WaterFluidMixin",
+    "BlockAttacksComponentMixin"
+  ],
+  "client": [
+    "DrawContextMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

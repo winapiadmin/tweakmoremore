@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "tweakmoremore",
+  "version": "${version}",
+  "name": "tweakmoremore",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/tweakmoremore/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "net.winapiadmin.tweakmoremore.client.Client"
+    ],
+    "main": [
+      "net.winapiadmin.tweakmoremore.Main"
+    ]
+  },
+  "mixins": [
+    "tweakmoremore.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "${minecraft_version}"
+  },
+  "accessWidener": "tweakmoremore.accesswidener"
+}
