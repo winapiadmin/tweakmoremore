@@ -5,18 +5,40 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.api.ModInitializer;
+import java.nio.file.Path;
+import java.nio.file.Files;
 import net.fabricmc.fabric.api.command.v2.*;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.WorldSavePath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 public class Main implements ModInitializer {
   public static final Logger LOGGER = LoggerFactory.getLogger("tweakmoremore");
-  public static final ModConfig config = ModConfig.get();
+  public static ModConfig config = ModConfig.read(
+      FabricLoader.getInstance().getConfigDir().resolve("tweakmoremore.json"));
   @Override
   public void onInitialize() {
-      ArgumentTypeRegistry.registerArgumentType(
+    ServerWorldEvents.LOAD.register((server, world) -> {
+        Path path = server.getSavePath(WorldSavePath.ROOT)
+            .resolve("tweakmoremore.json");
+
+        if (Files.exists(path)) {
+            config = ModConfig.read(path);
+        } else {
+            config = ModConfig.read(
+                FabricLoader.getInstance().getConfigDir()
+                    .resolve("tweakmoremore.json")
+            );
+        }
+    });
+    ServerWorldEvents.UNLOAD.register((server, world) -> {
+      if (config!=null) config.save();
+    });
+    ArgumentTypeRegistry.registerArgumentType(
         Identifier.of("tweakmoremore", "config_key"), ConfigKeyArgument.class,
         ConstantArgumentSerializer.of(ConfigKeyArgument::new));
     CommandRegistrationCallback.EVENT.register(
@@ -34,28 +56,33 @@ public class Main implements ModInitializer {
                           (name, value)
                               -> ctx.getSource().sendFeedback(
                                   ()
-                                      -> Text.literal("Rule[" + name + "]=" +
-                                                      value),
+                                      -> Text.literal("Rule[" + name +
+                                                      "]=" + value),
                                   false));
 
                       return 1;
                     })
                     .then(
                         argument("name", ConfigKeyArgument.key())
-.suggests((ctx, builder) -> {
-  String remaining = builder.getRemaining().toLowerCase();
+                            .suggests((ctx, builder) -> {
+                              String remaining =
+                                  builder.getRemaining().toLowerCase();
 
-  config.keySet().stream()
-      .filter(key -> key.toLowerCase().startsWith(remaining))
-      .sorted() // optional, but keeps it predictable
-      .forEach(builder::suggest);
+                              config.keySet()
+                                  .stream()
+                                  .filter(key
+                                          -> key.toLowerCase().startsWith(
+                                              remaining))
+                                  .sorted() // optional, but keeps it
+                                            // predictable
+                                  .forEach(builder::suggest);
 
-  return builder.buildFuture();
-})
+                              return builder.buildFuture();
+                            })
                             .executes(ctx -> {
                               String name =
                                   StringArgumentType.getString(ctx, "name");
-                              if (config.get(name)==null) {
+                              if (config.get(name) == null) {
                                 ctx.getSource().sendError(
                                     Text.literal(name + " does not exist"));
                                 return 0;
@@ -68,7 +95,8 @@ public class Main implements ModInitializer {
                               return 1;
                             })
                             .then(
-                                argument("value", StringArgumentType.greedyString())
+                                argument("value",
+                                         StringArgumentType.greedyString())
                                     .executes(ctx -> {
                                       String name =
                                           StringArgumentType.getString(ctx,
@@ -163,17 +191,20 @@ public class Main implements ModInitializer {
       };
     }
     public static RuleType fromObject(Object o) {
-      if (o instanceof Boolean) return BOOLEAN;
-      if (o instanceof Integer) return INTEGER;
-      if (o instanceof Float) return FLOAT;
-      if (o instanceof String) return STRING;
+      if (o instanceof Boolean)
+        return BOOLEAN;
+      if (o instanceof Integer)
+        return INTEGER;
+      if (o instanceof Float)
+        return FLOAT;
+      if (o instanceof String)
+        return STRING;
 
-      throw new IllegalArgumentException(
-        "Unsupported rule value type: " + o.getClass());
+      throw new IllegalArgumentException("Unsupported rule value type: " +
+                                         o.getClass());
     }
   }
   private RuleType inferType(String raw) {
-
     // boolean (strict)
     if (raw.equalsIgnoreCase("true") || raw.equalsIgnoreCase("false"))
       return RuleType.BOOLEAN;

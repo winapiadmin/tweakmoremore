@@ -31,7 +31,7 @@ public class ConfigKeyArgument implements ArgumentType<String> {
 
   private boolean isValidKeyChar(char c) {
     return Character.isLetterOrDigit(c) || c == '_' || c == ':' || c == '-' ||
-        c == '.' || c=='['||c==']';
+        c == '.' || c == '[' || c == ']';
   }
 
   @Override

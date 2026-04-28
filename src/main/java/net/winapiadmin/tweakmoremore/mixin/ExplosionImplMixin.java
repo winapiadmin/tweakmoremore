@@ -94,11 +94,11 @@ public abstract class ExplosionImplMixin {
 
         if (name == null) return;
 
-        this.power = Main.config.get(name + "_explosionPower", power);
-        this.createFire = Main.config.get(name + "_createFire", createFire);
+        this.power = Main.config.get("explosive."+name + "_explosionPower", power);
+        this.createFire = Main.config.get("explosive."+name + "_createFire", createFire);
 
         try {
-            String stored = Main.config.get(name + "_destroyBlocks",
+            String stored = Main.config.get("explosive."+name + "_destroyBlocks",
                     destructionType.name());
             this.destructionType = Explosion.DestructionType.valueOf(stored);
         } catch (Exception ignored) {}
@@ -110,22 +110,22 @@ public abstract class ExplosionImplMixin {
 
     @Unique
     private String damageMode() {
-        return Main.config.get(name + "_calcDamageMode", "vanilla");
+        return Main.config.get("explosive."+name + "_calcDamageMode", "vanilla");
     }
 
     @Unique
     private String blockMode() {
-        return Main.config.get(name + "_destroyBlocksLogic", "vanilla");
+        return Main.config.get("explosive."+name + "_destroyBlocksLogic", "vanilla");
     }
 
     @Unique
     private String damageEntitiesMode() {
-        return Main.config.get(name + "_damageEntitiesLogic", "vanilla");
+        return Main.config.get("explosive."+name + "_damageEntitiesLogic", "vanilla");
     }
 
     @Unique
     private boolean damageEntitiesEnabled() {
-        return Main.config.get(name + "_damageEntities", true);
+        return Main.config.get("explosive."+name + "_damageEntities", true);
     }
 
     /* ------------------------------------------------------------ */
@@ -143,7 +143,7 @@ public abstract class ExplosionImplMixin {
             case "off" -> 0f;
 
             case "fixed" ->
-                    Main.config.get(name + "_fixedDamage", 5.0F);
+                    Main.config.get("explosive."+name + "_fixedDamage", 5.0F);
 
             case "new" -> {
 
@@ -301,22 +301,22 @@ public abstract class ExplosionImplMixin {
                 pos.y + radius + 1,
                 pos.z + radius + 1
         );
-        String includeEntitiesSelector=Main.config.get(name+"_damageEntitiesInclude", "@e");
-        String excludeEntitiesSelector=Main.config.get(name+"_damageEntitiesExclude", "");
+        String includeEntitiesSelector=Main.config.get("explosive."+name+"_damageEntitiesInclude", "@e");
+        String excludeEntitiesSelector=Main.config.get("explosive."+name+"_damageEntitiesExclude", "");
         ServerCommandSource source= Objects.requireNonNull(world.getServer()).getCommandSource();
         Set<Entity> targets = new HashSet<>(world.getOtherEntities(this.entity, box));
         try{
             targets.addAll(parseSelector(source, includeEntitiesSelector));
         }
         catch(CommandSyntaxException e){
-            Main.LOGGER.warn("{}_damageEntitiesInclude option is illegal {}", name, e);
+            Main.LOGGER.warn("explosive.{}_damageEntitiesInclude option is illegal {}", name, e);
             targets.addAll(parseSelector(source, "@e"));
         }
         try{
             parseSelector(source, excludeEntitiesSelector).forEach(targets::remove);
         }
         catch(CommandSyntaxException e){
-            Main.LOGGER.warn("{}_damageEntitiesExclude option is illegal {}", name, e);
+            Main.LOGGER.warn("explosive.{}_damageEntitiesExclude option is illegal {}", name, e);
         }
         for (Entity entity : targets) {
             if (entity.isImmuneToExplosion(self))

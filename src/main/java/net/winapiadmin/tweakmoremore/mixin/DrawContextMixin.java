@@ -38,7 +38,7 @@ public class DrawContextMixin
         {
             return "";
         }
-        if (Main.config.get(Registries.ITEM.getId(stack.getItem()).toShortString()+"_truncateItemCount", true))
+        if (Main.config.get("item."+Registries.ITEM.getId(stack.getItem()).toShortString()+"+truncateItemCountShown", true))
         {
             int suffix = (int)Math.log10(count) / 3;
             count /= (int) Math.pow(1000, suffix);

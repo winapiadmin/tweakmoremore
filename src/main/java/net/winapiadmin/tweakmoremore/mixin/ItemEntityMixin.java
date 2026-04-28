@@ -15,7 +15,7 @@ public class ItemEntityMixin {
      */
     @Overwrite
     private static void merge(ItemEntity targetEntity, ItemStack stack1, ItemStack stack2) {
-        ItemStack itemStack = ItemEntity.merge(stack1, stack2, Main.config.get(Registries.ITEM.getId(stack1.getItem()).toShortString()+"_stackSize", Main.config.get("item.codec.maxStackSize", 64)));
+        ItemStack itemStack = ItemEntity.merge(stack1, stack2, Main.config.get("item."+Registries.ITEM.getId(stack1.getItem()).toShortString()+"_stackSize", Main.config.get("item.codec.maxStackSize", 64)));
         targetEntity.setStack(itemStack);
     }
 }

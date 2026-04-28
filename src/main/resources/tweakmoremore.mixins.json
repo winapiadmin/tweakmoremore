@@ -33,7 +33,7 @@
     "StillWaterFluidMixin",
     "ToolTipMixin",
     "WaterFluidMixin",
-    "BlockAttacksComponentMixin"
+    "BlocksAttacksComponentMixin"
   ],
   "client": [
     "DrawContextMixin"

@@ -38,3 +38,4 @@ accessible field net/minecraft/block/AbstractBlock$Settings forceSolid Z
 accessible field net/minecraft/block/AbstractBlock$Settings pistonBehavior Lnet/minecraft/block/piston/PistonBehavior;
 accessible field net/minecraft/block/AbstractBlock$Settings dynamicBounds Z
 accessible field net/minecraft/block/AbstractBlock settings Lnet/minecraft/block/AbstractBlock$Settings;
+accessible field net/minecraft/item/ItemStack components Lnet/minecraft/component/MergedComponentMap;
