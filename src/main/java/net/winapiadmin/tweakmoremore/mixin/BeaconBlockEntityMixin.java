@@ -117,7 +117,7 @@ public abstract class BeaconBlockEntityMixin {
         // ----- Amplifier -----
         int amplifier = 0;
         if (beaconLevel >= 4 && Objects.equals(primaryEffect, secondaryEffect)) {
-            String name_="beacon.amplifier."+Registries.STATUS_EFFECT.getId(primaryEffect.value()).toShortString();
+            String name_="beacon.amplifier."+ Objects.requireNonNull(Registries.STATUS_EFFECT.getId(primaryEffect.value())).toShortString();
             amplifier = (int) evaluate(
                     name_,
                     Main.config.get(name_, DEFAULT_AMPLIFIER_EQ),
