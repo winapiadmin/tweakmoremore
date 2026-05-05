@@ -44,5 +44,5 @@ jobs:
         if: ${{ runner.os == 'Linux' }}
         uses: actions/upload-artifact@v6
         with:
-          name: build-artifacts
+          name: build-artifacts-${{ matrix.java }}-${{ matrix.distro }}
           path: build/libs/
