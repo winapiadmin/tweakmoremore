@@ -32,8 +32,7 @@
     "StillLavaFluidMixin",
     "StillWaterFluidMixin",
     "ToolTipMixin",
-    "WaterFluidMixin",
-    "BlocksAttacksComponentMixin"
+    "WaterFluidMixin"
   ],
   "client": [
     "DrawContextMixin"

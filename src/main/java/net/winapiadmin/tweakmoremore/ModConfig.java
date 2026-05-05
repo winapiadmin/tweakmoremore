@@ -2,197 +2,122 @@ package net.winapiadmin.tweakmoremore;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.ToNumberPolicy;
+import net.minecraft.util.crash.CrashException;
+import net.minecraft.util.crash.CrashReport;
+
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.*;
+
 public class ModConfig {
+    private int DataVersion;
+    private static final int CURRENT_VERSION = 1;
+    private final Map<String, Object> values = new HashMap<>();
+    private final transient Path path;
 
-  public Map<String, Boolean> booleans = new HashMap<>();
+    private static final Gson GSON =
+            new GsonBuilder().setPrettyPrinting().setNumberToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE).create();
 
-  public Map<String, Integer> integers = new HashMap<>();
+    private static int dirtyCount = 0;
+    private static final int SAVE_INTERVAL = 10;
 
-  public Map<String, Float> floats = new HashMap<>();
+    private ModConfig(Path path) {
+        this.path = path;
+    }
 
-  public Map<String, String> strings = new HashMap<>();
-  private transient Path path;
-  private static final Gson GSON =
-      new GsonBuilder().setPrettyPrinting().create();
-  private static int dirtyCount = 0;
-  private static final int SAVE_INTERVAL = 1000;
-  private ModConfig(Path path) { this.path = path; }
+    public void read() {
+        values.clear();
 
-  public boolean read() {
-    this.booleans.clear();
-    this.integers.clear();
-    this.floats.clear();
-    this.strings.clear();
-    try {
-      if (!Files.exists(path)) {
-        return false;
-      }
+        if (!Files.exists(path)) return;
 
-      try (Reader reader = Files.newBufferedReader(path)) {
-        ModConfig loaded = GSON.fromJson(reader, ModConfig.class);
+        try (Reader reader = Files.newBufferedReader(path)) {
+            ModConfig loaded = GSON.fromJson(reader, ModConfig.class);
 
-        if (loaded != null) {
-          if (loaded.booleans != null)
-            this.booleans.putAll(loaded.booleans);
-          if (loaded.integers != null)
-            this.integers.putAll(loaded.integers);
-          if (loaded.floats != null)
-            this.floats.putAll(loaded.floats);
-          if (loaded.strings != null)
-            this.strings.putAll(loaded.strings);
-          return true;
+            if (loaded != null) {
+                if (loaded.DataVersion != CURRENT_VERSION) {
+                    CrashReport report = CrashReport.create(
+                            new IllegalStateException("Config version mismatch"),
+                            "Loading tweakmoremore config"
+                    );
+
+                    report.addElement("Config details")
+                            .add("Expected version", CURRENT_VERSION)
+                            .add("Actual version", loaded.DataVersion)
+                            .add("Path", path.toString());
+
+                    throw new CrashException(report);
+                }
+                values.putAll(loaded.values);
+                DataVersion=CURRENT_VERSION;
+            }
         }
-      }
+        catch(Exception e){
+            throw new RuntimeException(e);
+        }
 
-    } catch (Exception e) {
-      e.printStackTrace();
     }
 
-    return false;
-  }
-  public static ModConfig read(Path path) {
-    ModConfig config = new ModConfig(path);
-    config.read();
-    return config;
-  }
-
-  public void save() {
-    try {
-      Files.createDirectories(path.getParent());
-
-      try (Writer writer = Files.newBufferedWriter(this.path)) {
-        GSON.toJson(this, writer);
-      }
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-  public Main.RuleType getType(String key) {
-    if (booleans.containsKey(key))
-      return Main.RuleType.BOOLEAN;
-    if (integers.containsKey(key))
-      return Main.RuleType.INTEGER;
-    if (floats.containsKey(key))
-      return Main.RuleType.FLOAT;
-    if (strings.containsKey(key))
-      return Main.RuleType.STRING;
-    return null;
-  }
-
-  public Object getRaw(String key) {
-    if (booleans.containsKey(key))
-      return booleans.get(key);
-    if (integers.containsKey(key))
-      return integers.get(key);
-    if (floats.containsKey(key))
-      return floats.get(key);
-    if (strings.containsKey(key))
-      return strings.get(key);
-    return null;
-  }
-
-  public void set(String key, Main.RuleType type, Object value) {
-    setTyped(key, type.name(), value);
-  }
-
-  public void setTyped(String key, String type, Object value) {
-    Main.RuleType ruleType = Main.RuleType.fromString(type);
-
-    switch (ruleType) {
-    case BOOLEAN -> {
-      if (!(value instanceof Boolean b))
-        throw new IllegalArgumentException("Expected Boolean");
-      booleans.put(key, b);
+    public static ModConfig read(Path path)  {
+        ModConfig config = new ModConfig(path);
+        config.read();
+        return config;
     }
 
-    case INTEGER -> {
-      if (!(value instanceof Number n))
-        throw new IllegalArgumentException("Expected Number");
-      integers.put(key, n.intValue());
+    public void save() {
+        try {
+            Files.createDirectories(path.getParent());
+            try (Writer writer = Files.newBufferedWriter(path)) {
+                GSON.toJson(this, writer);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void set(String key, Object value) {
+        values.put(key, value);
+
+        dirtyCount++;
+        if (dirtyCount >= SAVE_INTERVAL) {
+            save();
+            dirtyCount = 0;
+        }
     }
 
-    case FLOAT -> {
-      if (!(value instanceof Number n))
-        throw new IllegalArgumentException("Expected Number");
-      floats.put(key, n.floatValue());
+    @SuppressWarnings("unchecked")
+    public <T> T get(String key, T defaultValue) {
+        Object v = values.get(key);
+
+        if (v == null) {
+            set(key, defaultValue);
+            return defaultValue;
+        }
+
+        if (defaultValue instanceof Integer) return (T) Integer.valueOf(((Number) v).intValue());
+        if (defaultValue instanceof Float) return (T) Float.valueOf(((Number) v).floatValue());
+        if (defaultValue instanceof Double) return (T) Double.valueOf(((Number) v).doubleValue());
+
+        return (T) v;
     }
 
-    case STRING -> {
-      if (!(value instanceof String s))
-        throw new IllegalArgumentException("Expected String");
-      strings.put(key, s);
+    public Object get(String key){
+        return values.get(key);
     }
-    }
-
-    dirtyCount++;
-
-    if (dirtyCount >= SAVE_INTERVAL) {
-      save();
-      dirtyCount = 0;
-    }
-  }
-
-  @SuppressWarnings("unchecked")
-  public <T> T get(String key, T defaultValue) {
-
-    Object value = getRaw(key);
-
-    if (value == null) {
-      set(key, Main.RuleType.fromObject((Object)defaultValue), defaultValue);
-      return defaultValue;
+    public boolean isEmpty() {
+        return values.isEmpty();
     }
 
-    Class<?> clazz = defaultValue.getClass();
+    public void forEach(BiConsumer<String, Object> action) {
+        values.forEach(action);
+    }
 
-    return switch (value) {
-      case Number n when clazz == Integer.class ->
-        (T) Integer.valueOf(n.intValue());
-
-      case Number n when clazz == Float.class ->
-        (T) Float.valueOf(n.floatValue());
-
-      case Number n when clazz == Double.class ->
-        (T) Double.valueOf(n.doubleValue());
-
-      case Boolean b when clazz == Boolean.class -> (T) b;
-
-      default -> (T) value;
-    };
-  }
-
-  @SuppressWarnings("unchecked")
-  public <T> T get(String key) {
-    Object value = getRaw(key);
-    if (value == null)
-      return null;
-    return (T)value;
-  }
-  public boolean isEmpty() {
-    return booleans.isEmpty() && integers.isEmpty() && floats.isEmpty() &&
-        strings.isEmpty();
-  }
-  public void forEach(BiConsumer<String, Object> action) {
-    booleans.forEach(action);
-    integers.forEach(action);
-    strings.forEach(action);
-    floats.forEach(action);
-  }
-  public Set<String> keySet() {
-
-    Set<String> allKeys = new HashSet<>();
-
-    allKeys.addAll(booleans.keySet());
-    allKeys.addAll(integers.keySet());
-    allKeys.addAll(strings.keySet());
-    allKeys.addAll(floats.keySet());
-    return allKeys;
-  }
+    public Set<String> keySet() {
+        return values.keySet();
+    }
+    public boolean containsKey(String key){
+        return values.containsKey(key);
+    }
 }

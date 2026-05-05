@@ -9,6 +9,7 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.Item;
 import net.minecraft.potion.Potion;
 import net.minecraft.registry.*;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.entry.RegistryEntryInfo;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.intprovider.*;
@@ -19,7 +20,6 @@ import org.spongepowered.asm.mixin.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 
 @Mixin(Registry.class)
 public interface RegistryMixin {
@@ -27,9 +27,12 @@ public interface RegistryMixin {
      * Registers {@code entry} to {@code registry} under {@code key}.
      *
      * @return the passed {@code entry}
+     * @author mojang
+     * @author winapiadmin
      */
     @Overwrite
-    static <R, T extends R> net.minecraft.registry.entry.RegistryEntry.Reference<T> registerReference(Registry<R> registry, RegistryKey<R> key, T entry) {
+    @SuppressWarnings("unchecked")
+    static <R, T extends R> RegistryEntry.Reference<R> registerReference(Registry<R> registry, RegistryKey<R> key, T entry) {
         if (registry.equals(Registries.BLOCK) && entry instanceof ExperienceDroppingBlock experienceDroppingBlock){
             setExp(experienceDroppingBlock,key.getValue().toShortString());
         }
@@ -44,14 +47,18 @@ public interface RegistryMixin {
         else if (registry.equals(Registries.BLOCK) && entry instanceof Block block){
             modifyBlockSettings(block.getSettings(),key.getValue().toShortString());
         }
-        return ((MutableRegistry)registry).add(key, (R)entry, RegistryEntryInfo.DEFAULT);
+        return ((MutableRegistry<R>)registry).add(key, entry, RegistryEntryInfo.DEFAULT);
     }
     /**
      * Registers {@code entry} to {@code registry} under {@code key}.
      *
      * @return the passed {@code entry}
+     * @author mojang
+     * @author winapiadmin
+     * @reason items, blocks, etc.
      */
     @Overwrite
+    @SuppressWarnings("unchecked")
     static <V, T extends V> T register(Registry<V> registry, RegistryKey<V> key, T entry) {
         if (registry.equals(Registries.BLOCK) && entry instanceof ExperienceDroppingBlock experienceDroppingBlock){
             setExp(experienceDroppingBlock,key.getValue().toShortString());
@@ -67,10 +74,11 @@ public interface RegistryMixin {
         else if (registry.equals(Registries.BLOCK) && entry instanceof Block block){
             modifyBlockSettings(block.getSettings(),key.getValue().toShortString());
         }
-        ((MutableRegistry)registry).add(key, entry, RegistryEntryInfo.DEFAULT);
+        ((MutableRegistry<V>)registry).add(key, entry, RegistryEntryInfo.DEFAULT);
         return entry;
     }
     @Unique
+    @SuppressWarnings("deprecation")
     private static void modifyBlockSettings(AbstractBlock.Settings settings, String name) {
         settings.collidable=Main.config.get("block."+name+".modifiers.collidable", settings.collidable);
         settings.resistance = Main.config.get("block."+name+".modifiers.resistance", settings.resistance);
@@ -86,26 +94,26 @@ public interface RegistryMixin {
         settings.liquid = Main.config.get("block."+name+".modifiers.liquid", settings.liquid);
         settings.forceNotSolid = Main.config.get("block."+name+".modifiers.forceNotSolid", settings.forceNotSolid);
         settings.forceSolid = Main.config.get("block."+name+".modifiers.forceSolid", settings.forceSolid);
-PistonBehavior current = settings.pistonBehavior;
+        PistonBehavior current = settings.pistonBehavior;
 
-String defaultPB = (current == null) ? "NULL" : current.name();
+        String defaultPB = (current == null) ? "NULL" : current.name();
 
-String raw = Main.config.get("block." + name + ".modifiers.pistonBehavior", defaultPB);
+        String raw = Main.config.get("block." + name + ".modifiers.pistonBehavior", defaultPB);
 
-PistonBehavior parsed;
+        PistonBehavior parsed;
 
-if (raw.toUpperCase() == "NULL") {
-    parsed = null;
-} else {
-    try {
-        parsed = PistonBehavior.valueOf(raw.toUpperCase());
-    } catch (IllegalArgumentException e) {
-        parsed = current;
-        Main.LOGGER.warn(name+".pistonBehavior parse exception: "+e);
-    }
-}
+        if (raw.equalsIgnoreCase("NULL")) {
+            parsed = null;
+        } else {
+            try {
+                parsed = PistonBehavior.valueOf(raw.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                parsed = current;
+                Main.LOGGER.warn("{}.pistonBehavior parse exception: {}", name, e);
+            }
+        }
 
-settings.pistonBehavior = parsed;
+        settings.pistonBehavior = parsed;
         settings.dynamicBounds = Main.config.get("block."+name+".modifiers.dynamicBounds", settings.dynamicBounds);
     }
 
@@ -114,7 +122,7 @@ settings.pistonBehavior = parsed;
         List<StatusEffectInstance> effects = potion.getEffects();
 
         for (StatusEffectInstance inst : effects) {
-            String effectName = "";
+            String effectName;
             Identifier id = Identifier.tryParse(inst.getEffectType().getIdAsString());
             if (id != null)
                 effectName = id.toShortString();
@@ -166,24 +174,24 @@ settings.pistonBehavior = parsed;
 
         ((ItemAccessor) item).setComponents(updated);
     }
-@Unique
-private static void setCooldownTime(Item item, String id) {
-    ComponentMap originalComponents = item.getComponents();
-    UseCooldownComponent base = originalComponents.get(DataComponentTypes.USE_COOLDOWN);
-    base=base==null?new UseCooldownComponent(0.0f):base;
-    Optional<Identifier> cooldownGroup=base.cooldownGroup();
-    float newSeconds = Main.config.get("item." + id + ".useCooldown", base.seconds());
+    @Unique
+    private static void setCooldownTime(Item item, String id) {
+        ComponentMap originalComponents = item.getComponents();
+        UseCooldownComponent base = originalComponents.get(DataComponentTypes.USE_COOLDOWN);
+        base=base==null?new UseCooldownComponent(0.0f):base;
+        Optional<Identifier> cooldownGroup=base.cooldownGroup();
+        float newSeconds = Main.config.get("item." + id + ".useCooldown", base.seconds());
 
-    UseCooldownComponent modified = new UseCooldownComponent(
-            newSeconds, cooldownGroup);
+        UseCooldownComponent modified = new UseCooldownComponent(
+                newSeconds, cooldownGroup);
 
-    ComponentMap updatedMap = ComponentMap.builder()
-            .addAll(originalComponents)
-            .add(DataComponentTypes.USE_COOLDOWN, modified)
-            .build();
+        ComponentMap updatedMap = ComponentMap.builder()
+                .addAll(originalComponents)
+                .add(DataComponentTypes.USE_COOLDOWN, modified)
+                .build();
 
-    ((ItemAccessor) item).setComponents(updatedMap);
-}
+        ((ItemAccessor) item).setComponents(updatedMap);
+    }
     @Unique
     private static void setStackSize(Item item, String id) {
         ComponentMap originalComponents = item.getComponents();
@@ -206,6 +214,7 @@ private static void setCooldownTime(Item item, String id) {
         ((ItemAccessor) item).setComponents(updatedMap);
     }
 
+    @Unique
     private static void setExp(ExperienceDroppingBlock xp, String id) {
         IntProvider prov = xp.experienceDropped;
         if (prov instanceof ConstantIntProvider c) {

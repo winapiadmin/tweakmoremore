@@ -1,7 +1,6 @@
 // credit to stackable127
 package net.winapiadmin.tweakmoremore.mixin;
 
-import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.item.ItemStack;
@@ -38,7 +37,7 @@ public class DrawContextMixin
         {
             return "";
         }
-        if (Main.config.get("item."+Registries.ITEM.getId(stack.getItem()).toShortString()+"+truncateItemCountShown", true))
+        if (Main.config.get("item."+Registries.ITEM.getId(stack.getItem()).toShortString()+".truncateItemCountShown", true))
         {
             int suffix = (int)Math.log10(count) / 3;
             count /= (int) Math.pow(1000, suffix);

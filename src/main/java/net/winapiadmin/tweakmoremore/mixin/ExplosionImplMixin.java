@@ -17,10 +17,8 @@ import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.EntityTypeTags;
-import net.minecraft.server.command.CommandOutput;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
 import net.minecraft.util.math.*;
 import net.minecraft.world.explosion.*;
 import net.minecraft.command.argument.EntityArgumentType;
@@ -93,8 +91,9 @@ public abstract class ExplosionImplMixin {
         }
 
         if (name == null) return;
-
-        this.power = Main.config.get("explosive."+name + "_explosionPower", power);
+        // vanilla behavior for tnt minecarts: randomize a bit of explosion power
+        if (name.equals("tnt_minecart") && Main.config.get("explosive.tnt_minecart.fixedPower",false))
+            this.power = Main.config.get("explosive."+name + "_explosionPower", power);
         this.createFire = Main.config.get("explosive."+name + "_createFire", createFire);
 
         try {
