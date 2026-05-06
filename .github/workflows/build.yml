@@ -45,4 +45,6 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: build-artifacts-${{ matrix.java }}-${{ matrix.distro }}
-          path: build/libs/
+          path: |
+            build/libs/
+            build/devlibs/
