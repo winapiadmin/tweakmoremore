@@ -20,7 +20,7 @@ public class ModConfig {
     private final transient Path path;
 
     private static final Gson GSON =
-            new GsonBuilder().setPrettyPrinting().setNumberToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE).create();
+            new GsonBuilder().setPrettyPrinting().setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE).create();
 
     private static int dirtyCount = 0;
     private static final int SAVE_INTERVAL = 10;
