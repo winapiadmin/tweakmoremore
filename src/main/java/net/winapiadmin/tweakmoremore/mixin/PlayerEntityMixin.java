@@ -52,7 +52,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     @Inject(method = "tick", at = @At("RETURN"))
     private void onTick(CallbackInfo ci) {
         PlayerEntity self = (PlayerEntity)(Object)this;
-        if (Main.config.get("entity.showFallDist", false) && self.isOnGround()) {
+        if (Main.config.get("entity.showFallDist", false) && !self.isOnGround()) {
             self.sendMessage(Text.literal("fall distance: " + self.fallDistance), true);
         }
     }
