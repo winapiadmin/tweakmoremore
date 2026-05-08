@@ -14,6 +14,6 @@ public interface InventoryMixin {
             )
     default int getMaxCountPerStack(int constant)
     {
-        return Main.config.get("item.<any>.maxCountPerStack", constant);
+        return Math.max(1, Main.config.get("item.<any>.maxCountPerStack", constant));
     }
 }
