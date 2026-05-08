@@ -15,7 +15,7 @@ import java.util.function.*;
 
 public class ModConfig {
     private int DataVersion;
-    private static final int CURRENT_VERSION = 1;
+    private static final int CURRENT_VERSION = 2;
     private final Map<String, Object> values = new HashMap<>();
     private final transient Path path;
 
@@ -69,6 +69,7 @@ public class ModConfig {
 
     public void save() {
         try {
+            DataVersion=CURRENT_VERSION;
             Files.createDirectories(path.getParent());
             try (Writer writer = Files.newBufferedWriter(path)) {
                 GSON.toJson(this, writer);
