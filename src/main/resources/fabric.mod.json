@@ -25,7 +25,7 @@
     "minecraft": "${minecraft_version}"
   },
   "breaks": {
-    "tweakmoremore": "1.0-SNAPSHOT"
+    "tweakmoremore": "<3.0.0"
   },
   "accessWidener": "tweakmoremore.accesswidener"
 }

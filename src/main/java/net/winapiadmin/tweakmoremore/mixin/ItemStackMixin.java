@@ -35,7 +35,10 @@ class ItemStackMixin {
                 codec -> RecordCodecBuilder.mapCodec(
                     instance -> instance.group(
                             Item.ENTRY_CODEC.fieldOf("id").forGetter(ItemStack::getRegistryEntry),
-                            Codecs.rangedInt(1, Main.config.get("item.codec.maxStackSize", 64)).fieldOf("count").forGetter(ItemStack::getCount),
+                            Codecs.rangedInt(
+                                    1,
+                                    Math.max(1, Main.config.get("item.<any>.maxCountPerStack", 99))
+                            ).fieldOf("count").forGetter(ItemStack::getCount),
                             ComponentChanges.CODEC.optionalFieldOf("components", ComponentChanges.EMPTY).forGetter(stack -> stack.components.getChanges())
                         )
                         .apply(instance, ItemStack::new)
