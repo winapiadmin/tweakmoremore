@@ -14,6 +14,6 @@ public class DataComponentTypesMixin {
                     at = @At(value = "CONSTANT", args = "intValue=64")
             )
     private static int getMaxCountPerStack(int original) {
-        return Main.config.get("item.codec.maxStackSize", original);
+        return Main.config.get("item.<any>.maxCountPerStack", original);
     }
 }
