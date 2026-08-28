@@ -25,9 +25,8 @@ public class EntityPistonVelocityMixin {
 
 	@Redirect(method = "move", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setVelocity(Lnet/minecraft/util/math/Vec3d;)V", ordinal = 0))
 	private void redirectSetVelocityAtZero(Entity instance, Vec3d velocity) {
-                if (Main.config.get("bugfix.Entity.correctPistonVelocity", false))
-    		    if (!this.mixin$isPistonMove) {
+		if (!Main.config.get("bugfix.Entity.correctPistonVelocity", false) || !this.mixin$isPistonMove) {
 			instance.setVelocity(velocity);
-		    }
+		}
 	}
 }

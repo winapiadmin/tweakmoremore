@@ -21,7 +21,7 @@ public abstract class MinecartCollisionMixin extends Entity {
 
 	@Inject(method = "pushAwayFromMinecart", at = @At("HEAD"), cancellable = true)
 	private void mixin$onPushAwayFromMinecart(AbstractMinecartEntity entity, double xDiff, double zDiff, CallbackInfo ci) {
-                if (Main.config.get("bugfix.minecart.correctPushAwayFromMinecart",false)) return;
+		if (!Main.config.get("bugfix.minecart.correctPushAwayFromMinecart", false)) return;
 		double d;
 		double e;
 		if (AbstractMinecartEntity.areMinecartImprovementsEnabled(this.getEntityWorld())) {

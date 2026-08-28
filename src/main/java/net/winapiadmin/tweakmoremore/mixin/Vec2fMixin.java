@@ -31,7 +31,8 @@ public abstract class Vec2fMixin {
 
 	@Override
 	public int hashCode() {
-                if (Main.config.get("bugfix.Vec2f.accurateHashCode", false))
+		if (Main.config.get("bugfix.Vec2f.accurateHashCode", false)
+				&& Main.config.get("bugfix.Vec2f.equalWithObjectOverload", false))
                     return System.identityHashCode(this);
 		return Objects.hash(this.x, this.y);
 	}

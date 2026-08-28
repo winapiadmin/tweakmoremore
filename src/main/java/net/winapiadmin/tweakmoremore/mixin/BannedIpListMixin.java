@@ -45,16 +45,15 @@ public class BannedIpListMixin {
 	@Unique
 	private static String mixin$tryNormalizeEmbeddedIpv4(byte[] bytes) {
 		boolean allZeroPrefix = true;
-		for (int i = 0; i < 12; i++) {
+		for (int i = 0; i < 10; i++) {
 			if (bytes[i] != 0) {
 				allZeroPrefix = false;
 				break;
 			}
 		}
 
-		if (allZeroPrefix && bytes[10] == 0 && bytes[11] == 0) {
-			return mixin$ipv4FromBytes(bytes[12], bytes[13], bytes[14], bytes[15]);
-		} else if (allZeroPrefix && bytes[10] == (byte)255 && bytes[11] == (byte)255) {
+		if (allZeroPrefix && ((bytes[10] == 0 && bytes[11] == 0)
+				|| (bytes[10] == (byte)255 && bytes[11] == (byte)255))) {
 			return mixin$ipv4FromBytes(bytes[12], bytes[13], bytes[14], bytes[15]);
 		} else {
 			return null;

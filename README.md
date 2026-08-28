@@ -39,7 +39,7 @@ Config file: `config/tweakmoremore.json` (or per-world `<world>/tweakmoremore.js
 | `/rule` | List all configured rules |
 | `/rule <name>` | Show a rule's value |
 | `/rule <name> <value>` | Set a rule value |
-| `/forcetick <pos>` | Force a random tick on a block (requires `commands.forceRandomTick=true`) |
+| `/forcetick <pos>` | Force a random tick on a block (requires `commands.forceRandomTick=true` and the `GAMEMASTERS` permission level) |
 
 ## Documentation
 

@@ -82,24 +82,29 @@ class ItemStackMixin {
         String includeEntitiesSelector = Main.config.get("item." + name + ".damageMultiplerPlayersInclude", "");
         String excludeEntitiesSelector = Main.config.get("item." + name + ".damageMultiplerPlayersExclude", "@a");
         ServerCommandSource source = Objects.requireNonNull(world.getServer()).getCommandSource();
-        Set<Entity> targets = new HashSet<>();
+        Set<Entity> includedTargets = new HashSet<>();
+        Set<Entity> excludedTargets = new HashSet<>();
         try {
-            targets.addAll(parseSelector(source, includeEntitiesSelector));
+            includedTargets.addAll(parseSelector(source, includeEntitiesSelector));
         } catch (CommandSyntaxException e) {
             Main.LOGGER.warn("item.{}.damageMultiplerPlayersInclude option is illegal {}", name, e);
         }
         try {
-            parseSelector(source, excludeEntitiesSelector).forEach(targets::remove);
+            excludedTargets.addAll(parseSelector(source, excludeEntitiesSelector));
         } catch (CommandSyntaxException e) {
             Main.LOGGER.warn("item.{}.damageMultiplerPlayersExclude option is illegal {}", name, e);
             try {
-                targets.addAll(parseSelector(source, "@a"));
+                excludedTargets.addAll(parseSelector(source, "@a"));
             } catch (CommandSyntaxException ignored) {
             }
         }
-        if (player instanceof PlayerEntity player_)
-            if (!targets.contains(player_))
-                return (int)scaled;
+        if (player instanceof PlayerEntity player_) {
+            if (excludedTargets.contains(player_)
+                    || (!includeEntitiesSelector.isEmpty() && !includedTargets.contains(player_)))
+                return original;
+
+            return (int)scaled;
+        }
         return original;
     }
 }

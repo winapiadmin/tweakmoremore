@@ -26,7 +26,8 @@ public class ChaseServerMixin {
 	)
 	private List<ServerPlayerEntity> getDefensivePlayerList(PlayerManager pm) {
                 List<ServerPlayerEntity> players=this.playerManager.getPlayerList();
-		if (Main.config.get("bugfix.ChaseServer.copyPlayerListOnTeleport", false))
+		Object copyPlayerList = Main.config.get("bugfix.ChaseServer.copyPlayerListOnTeleport", false);
+		if (copyPlayerList instanceof Boolean copy && copy)
                     return List.copyOf(players);
                 else return players;
 	}

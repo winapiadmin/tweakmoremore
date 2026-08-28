@@ -12,9 +12,11 @@ This guide explains how to configure tweakmoremore through the JSON config file.
 ```json
 {
   "DataVersion": 2,
-  "mob_cap.chunk_area": 289,
-  "maceSmashMinFallDistance": 1.5,
-  "attribute.max_health.max": 1024.0
+  "values": {
+    "mob_cap.chunk_area": 289,
+    "maceSmashMinFallDistance": 1.5,
+    "attribute.max_health.max": 1024.0
+  }
 }
 ```
 
@@ -24,7 +26,7 @@ This guide explains how to configure tweakmoremore through the JSON config file.
 |------|---------|
 | Boolean | `true`, `false` |
 | Integer | `64`, `200` |
-| Float | `1.5f`, `0.8f` |
+| Float | `1.5`, `0.8` |
 | Double | `1.5`, `1024.0` |
 | String | `"formula_expression"` |
 
@@ -53,10 +55,12 @@ Some config options accept mathematical expressions using the exp4j library.
 
 ```json
 {
-  "player.xp.dropFormula": "min(experienceLevel*7,100)",
-  "experience_bottle.xpDropEquation": "3+randInt(0,5)+randInt(0,5)",
-  "beacon.radius": "beaconLevel * 20 + 20",
-  "beacon.duration": "(9 + beaconLevel * 4) * 20"
+  "values": {
+    "player.xp.dropFormula": "min(experienceLevel*7,100)",
+    "experience_bottle.xpDropEquation": "3+randInt(0,5)+randInt(0,5)",
+    "beacon.radius": "beaconLevel * 20 + 20",
+    "beacon.duration": "(9 + beaconLevel * 4) * 20"
+  }
 }
 ```
 
@@ -68,28 +72,32 @@ Properties can be customized per-block using the naming pattern:
 
 ```json
 {
-  "block.<block_name>.modifiers.<property>": <value>
+  "values": {
+    "block.<block_name>.modifiers.<property>": <value>
+  }
 }
 ```
 
 ```json
 {
-  "block.<block_name>.modifiers.collidable": true,
-  "block.<block_name>.modifiers.resistance": 6.0,
-  "block.<block_name>.modifiers.hardness": 5.0,
-  "block.<block_name>.modifiers.toolRequired": false,
-  "block.<block_name>.modifiers.randomTicks": false,
-  "block.<block_name>.modifiers.slipperiness": 0.6,
-  "block.<block_name>.modifiers.velocityMultiplier": 1.0,
-  "block.<block_name>.modifiers.jumpVelocityMultiplier": 1.0,
-  "block.<block_name>.modifiers.pistonBehavior": "NORMAL",
-  "block.<block_name>.modifiers.dynamicBounds": false,
-  "block.<block_name>.modifiers.opaque": true,
-  "block.<block_name>.modifiers.isAir": false,
-  "block.<block_name>.modifiers.burnable": false,
-  "block.<block_name>.modifiers.liquid": false,
-  "block.<block_name>.modifiers.forceNotSolid": false,
-  "block.<block_name>.modifiers.forceSolid": false
+  "values": {
+    "block.<block_name>.modifiers.collidable": true,
+    "block.<block_name>.modifiers.resistance": 6.0,
+    "block.<block_name>.modifiers.hardness": 5.0,
+    "block.<block_name>.modifiers.toolRequired": false,
+    "block.<block_name>.modifiers.randomTicks": false,
+    "block.<block_name>.modifiers.slipperiness": 0.6,
+    "block.<block_name>.modifiers.velocityMultiplier": 1.0,
+    "block.<block_name>.modifiers.jumpVelocityMultiplier": 1.0,
+    "block.<block_name>.modifiers.pistonBehavior": "NORMAL",
+    "block.<block_name>.modifiers.dynamicBounds": false,
+    "block.<block_name>.modifiers.opaque": true,
+    "block.<block_name>.modifiers.isAir": false,
+    "block.<block_name>.modifiers.burnable": false,
+    "block.<block_name>.modifiers.liquid": false,
+    "block.<block_name>.modifiers.forceNotSolid": false,
+    "block.<block_name>.modifiers.forceSolid": false
+  }
 }
 ```
 
@@ -99,16 +107,18 @@ Piston behavior values: `NORMAL`, `DESTROY`, `PUSH_ONLY`, `BLOCK`, `IGNORE`.
 
 ```json
 {
-  "item.<item_name>.maxCountPerStack": 64,
-  "item.<item_name>.stackSize": 64,
-  "item.<item_name>.useCooldown": 0.0,
-  "item.<item_name>.damageMultiplier": 1.0,
-  "item.<item_name>.truncateItemCountShown": true,
-  "item.<any>.maxCountPerStack": 64,
-  "item.<item_name>.damageMultiplerPlayersInclude": "",
-  "item.<item_name>.damageMultiplerPlayersExclude": "@a",
-  "item.despawn_age": 6000,
-  "item.<item_name>_stackSize": 64
+  "values": {
+    "item.<item_name>.maxCountPerStack": 64,
+    "item.<item_name>.stackSize": 64,
+    "item.<item_name>.useCooldown": 0.0,
+    "item.<item_name>.damageMultiplier": 1.0,
+    "item.<item_name>.truncateItemCountShown": true,
+    "item.<any>.maxCountPerStack": 64,
+    "item.<item_name>.damageMultiplerPlayersInclude": "",
+    "item.<item_name>.damageMultiplerPlayersExclude": "@a",
+    "item.despawn_age": 6000,
+    "item.<item_name>_stackSize": 64
+  }
 }
 ```
 
@@ -118,10 +128,12 @@ Entity selectors: `@p` (nearest), `@a` (all), `@e` (all entities), `@s` (self).
 
 ```json
 {
-  "food.<item_name>.nutrition": 3,
-  "food.<item_name>.saturation": 0.5,
-  "food.<item_name>.eattime": 32,
-  "food.<item_name>.alwaysEdible": false
+  "values": {
+    "food.<item_name>.nutrition": 3,
+    "food.<item_name>.saturation": 0.5,
+    "food.<item_name>.eattime": 32,
+    "food.<item_name>.alwaysEdible": false
+  }
 }
 ```
 
@@ -131,9 +143,11 @@ Per-spawn-group overrides (e.g. `monster`, `creature`, `ambient`, `water_creatur
 
 ```json
 {
-  "mob_cap.chunk_area": 289,
-  "mob_cap.monster": 70,
-  "mob_cap.creature": 10
+  "values": {
+    "mob_cap.chunk_area": 289,
+    "mob_cap.monster": 70,
+    "mob_cap.creature": 10
+  }
 }
 ```
 
@@ -143,9 +157,11 @@ Per-spawn-group overrides (e.g. `monster`, `creature`, `ambient`, `water_creatur
 
 ```json
 {
-  "beacon.radius": "beaconLevel * 20 + 20",
-  "beacon.duration": "(9 + beaconLevel * 4) * 20",
-  "beacon.amplifier.<effect_name>": 0
+  "values": {
+    "beacon.radius": "beaconLevel * 20 + 20",
+    "beacon.duration": "(9 + beaconLevel * 4) * 20",
+    "beacon.amplifier.<effect_name>": 0
+  }
 }
 ```
 
@@ -155,7 +171,9 @@ The `beacon.amplifier.<effect_name>` key sets the amplifier for a specific statu
 
 ```json
 {
-  "piston.push_limit": 12
+  "values": {
+    "piston.push_limit": 12
+  }
 }
 ```
 
@@ -165,8 +183,10 @@ The `beacon.amplifier.<effect_name>` key sets the amplifier for a specific statu
 
 ```json
 {
-  "enchantment.codec.weight": 1024,
-  "enchantment.codec.max_level": 255
+  "values": {
+    "enchantment.codec.weight": 1024,
+    "enchantment.codec.max_level": 255
+  }
 }
 ```
 
@@ -176,7 +196,9 @@ The `beacon.amplifier.<effect_name>` key sets the amplifier for a specific statu
 
 ```json
 {
-  "item.firework_rocket.flightTime": "flightDuration"
+  "values": {
+    "item.firework_rocket.flightTime": "flightDuration"
+  }
 }
 ```
 
@@ -190,12 +212,14 @@ Accepts an expression formula. Variables: `flightDuration` (the item's flight du
 
 ```json
 {
-  "entity.piglin.admireGoldPriority": 10,
-  "entity.piglin.findGoldRadius": 8,
-  "entity.piglin.findGoldSpeedModifier": 1.0,
-  "entity.piglin.findGoldTimeTicks": 120,
-  "entity.piglin.refuseTradeCooldownTicks": 20,
-  "entity.piglin.tradeTime": 120
+  "values": {
+    "entity.piglin.admireGoldPriority": 10,
+    "entity.piglin.findGoldRadius": 8,
+    "entity.piglin.findGoldSpeedModifier": 1.0,
+    "entity.piglin.findGoldTimeTicks": 120,
+    "entity.piglin.refuseTradeCooldownTicks": 20,
+    "entity.piglin.tradeTime": 120
+  }
 }
 ```
 
@@ -203,9 +227,11 @@ Accepts an expression formula. Variables: `flightDuration` (the item's flight du
 
 ```json
 {
-  "snow_golem.shoot_cooldown": 20,
-  "snow_golem.shoot_range": 10.0,
-  "snow_golem.hurt_by_water": true
+  "values": {
+    "snow_golem.shoot_cooldown": 20,
+    "snow_golem.shoot_range": 10.0,
+    "snow_golem.hurt_by_water": true
+  }
 }
 ```
 
@@ -215,7 +241,9 @@ Per-damage-type expressions for equipment durability loss:
 
 ```json
 {
-  "entity.damageEquipmentBehavior<damage_type>.damageExpression": "max(1.0,amount/4.0)"
+  "values": {
+    "entity.damageEquipmentBehavior<damage_type>.damageExpression": "max(1.0,amount/4.0)"
+  }
 }
 ```
 
@@ -227,9 +255,11 @@ Variables: `n` (number of slots), `amount` (damage amount).
 
 ```json
 {
-  "entity.showFallDist": true,
-  "player.showDamageInfo": false,
-  "player.xp.dropFormula": "experienceLevel * 7"
+  "values": {
+    "entity.showFallDist": true,
+    "player.showDamageInfo": false,
+    "player.xp.dropFormula": "experienceLevel * 7"
+  }
 }
 ```
 
@@ -239,8 +269,10 @@ Variables: `n` (number of slots), `amount` (damage amount).
 
 ```json
 {
-  "sculk_minExp": 1,
-  "sculk_maxExp": 10
+  "values": {
+    "sculk_minExp": 1,
+    "sculk_maxExp": 10
+  }
 }
 ```
 
@@ -250,9 +282,11 @@ Variables: `n` (number of slots), `amount` (damage amount).
 
 ```json
 {
-  "villager.item_pickup_range": 3,
-  "villager.item_sense_horizontal": 32,
-  "villager.item_sense_vertical": 16
+  "values": {
+    "villager.item_pickup_range": 3,
+    "villager.item_sense_horizontal": 32,
+    "villager.item_sense_vertical": 16
+  }
 }
 ```
 
@@ -262,7 +296,9 @@ Variables: `n` (number of slots), `amount` (damage amount).
 
 ```json
 {
-  "snowball.damage_to_<entity_type>": 0
+  "values": {
+    "snowball.damage_to_<entity_type>": 0
+  }
 }
 ```
 
@@ -270,7 +306,9 @@ Variables: `n` (number of slots), `amount` (damage amount).
 
 ```json
 {
-  "potion.<potion_name>.modifiers.<effect_name>.duration": 900
+  "values": {
+    "potion.<potion_name>.modifiers.<effect_name>.duration": 900
+  }
 }
 ```
 
@@ -280,9 +318,11 @@ Variables: `n` (number of slots), `amount` (damage amount).
 
 ```json
 {
-  "brewing_stands.brewTime": 400,
-  "brewing_stands.brewFuel": 20,
-  "brewing_stands.tick": true
+  "values": {
+    "brewing_stands.brewTime": 400,
+    "brewing_stands.brewFuel": 20,
+    "brewing_stands.tick": true
+  }
 }
 ```
 
@@ -290,22 +330,26 @@ Variables: `n` (number of slots), `amount` (damage amount).
 
 ```json
 {
-  "composterCompostDelay": 20
+  "values": {
+    "composterCompostDelay": 20
+  }
 }
 ```
 
 ```json
 {
-  "maceSmashMinFallDistance": 1.5,
-  "maceSmashRequiresNotGliding": true,
-  "maceSmashFallThresholdLow": 3.0,
-  "maceSmashFallThresholdHigh": 8.0,
-  "maceSmashDamagePerBlockLow": 4.0,
-  "maceSmashDamagePerBlockMid": 2.0,
-  "maceSmashDamagePerBlockHigh": 1.0,
-  "maceSmashKnockbackRange": 3.5,
-  "maceSmashKnockbackPower": 0.7,
-  "maceSmashHeavyKnockbackMultiplier": 2.0
+  "values": {
+    "maceSmashMinFallDistance": 1.5,
+    "maceSmashRequiresNotGliding": true,
+    "maceSmashFallThresholdLow": 3.0,
+    "maceSmashFallThresholdHigh": 8.0,
+    "maceSmashDamagePerBlockLow": 4.0,
+    "maceSmashDamagePerBlockMid": 2.0,
+    "maceSmashDamagePerBlockHigh": 1.0,
+    "maceSmashKnockbackRange": 3.5,
+    "maceSmashKnockbackPower": 0.7,
+    "maceSmashHeavyKnockbackMultiplier": 2.0
+  }
 }
 ```
 
@@ -329,7 +373,9 @@ The vanilla `max_health` attribute is hard-capped at 1024. This setting raises t
 
 ```json
 {
-  "attribute.max_health.max": 1024.0
+  "values": {
+    "attribute.max_health.max": 1024.0
+  }
 }
 ```
 
@@ -345,16 +391,18 @@ Per-explosive settings use the naming pattern `explosive.<name>_<property>` wher
 
 ```json
 {
-  "explosive.<name>_explosionPower": 4.0,
-  "explosive.<name>_createFire": false,
-  "explosive.<name>_destroyBlocks": "vanilla",
-  "explosive.<name>_destroyBlocksLogic": "vanilla",
-  "explosive.<name>_damageEntities": true,
-  "explosive.<name>_damageEntitiesLogic": "vanilla",
-  "explosive.<name>_fixedDamage": 5.0,
-  "explosive.<name>_calcDamageMode": "vanilla",
-  "explosive.<name>_damageEntitiesInclude": "@e",
-  "explosive.<name>_damageEntitiesExclude": ""
+  "values": {
+    "explosive.<name>_explosionPower": 4.0,
+    "explosive.<name>_createFire": false,
+    "explosive.<name>_destroyBlocks": "vanilla",
+    "explosive.<name>_destroyBlocksLogic": "vanilla",
+    "explosive.<name>_damageEntities": true,
+    "explosive.<name>_damageEntitiesLogic": "vanilla",
+    "explosive.<name>_fixedDamage": 5.0,
+    "explosive.<name>_calcDamageMode": "vanilla",
+    "explosive.<name>_damageEntitiesInclude": "@e",
+    "explosive.<name>_damageEntitiesExclude": ""
+  }
 }
 ```
 
@@ -366,12 +414,14 @@ Special: `explosive.tnt_minecart.fixedPower=bool` — force TNT minecart explosi
 
 ```json
 {
-  "mob_spawner.min_spawn_delay": 200,
-  "mob_spawner.max_spawn_delay": 800,
-  "mob_spawner.spawn_count": 4,
-  "mob_spawner.max_nearby_entities": 6,
-  "mob_spawner.required_player_range": 16,
-  "mob_spawner.spawn_range": 4
+  "values": {
+    "mob_spawner.min_spawn_delay": 200,
+    "mob_spawner.max_spawn_delay": 800,
+    "mob_spawner.spawn_count": 4,
+    "mob_spawner.max_nearby_entities": 6,
+    "mob_spawner.required_player_range": 16,
+    "mob_spawner.spawn_range": 4
+  }
 }
 ```
 
@@ -381,7 +431,9 @@ Special: `explosive.tnt_minecart.fixedPower=bool` — force TNT minecart explosi
 
 ```json
 {
-  "equipment.drop_chance": 1.0
+  "values": {
+    "equipment.drop_chance": 1.0
+  }
 }
 ```
 
@@ -389,8 +441,10 @@ Special: `explosive.tnt_minecart.fixedPower=bool` — force TNT minecart explosi
 
 ```json
 {
-  "xpDroppingBlock.<block_name>.minExp": 1,
-  "xpDroppingBlock.<block_name>.maxExp": 5
+  "values": {
+    "xpDroppingBlock.<block_name>.minExp": 1,
+    "xpDroppingBlock.<block_name>.maxExp": 5
+  }
 }
 ```
 
@@ -398,7 +452,9 @@ Special: `explosive.tnt_minecart.fixedPower=bool` — force TNT minecart explosi
 
 ```json
 {
-  "snowball.damage_to_<entity_type>": 0
+  "values": {
+    "snowball.damage_to_<entity_type>": 0
+  }
 }
 ```
 
@@ -406,7 +462,9 @@ Special: `explosive.tnt_minecart.fixedPower=bool` — force TNT minecart explosi
 
 ```json
 {
-  "potion.<potion_name>.modifiers.<effect_name>.duration": 900
+  "values": {
+    "potion.<potion_name>.modifiers.<effect_name>.duration": 900
+  }
 }
 ```
 
@@ -414,18 +472,20 @@ Special: `explosive.tnt_minecart.fixedPower=bool` — force TNT minecart explosi
 
 ```json
 {
-  "lavaFastPlayTickRate": 10,
-  "lavaNonFastPlayTickRate": 30,
-  "lavaFastPlayLevelDecreasePerBlock": 1,
-  "lavaNonFastPlayLevelDecreasePerBlock": 2,
-  "lavaFastPlayMaxFlowDist": 4,
-  "lavaNonFastPlayMaxFlowDist": 2,
-  "lavaRandomTick": true,
-  "stillLavaFluidLevel": 8,
-  "stillWaterFluidLevel": 8,
-  "waterTickRate": 5,
-  "waterLevelDecreasePerBlock": 1,
-  "waterMaxFlowDist": 4
+  "values": {
+    "lavaFastPlayTickRate": 10,
+    "lavaNonFastPlayTickRate": 30,
+    "lavaFastPlayLevelDecreasePerBlock": 1,
+    "lavaNonFastPlayLevelDecreasePerBlock": 2,
+    "lavaFastPlayMaxFlowDist": 4,
+    "lavaNonFastPlayMaxFlowDist": 2,
+    "lavaRandomTick": true,
+    "stillLavaFluidLevel": 8,
+    "stillWaterFluidLevel": 8,
+    "waterTickRate": 5,
+    "waterLevelDecreasePerBlock": 1,
+    "waterMaxFlowDist": 4
+  }
 }
 ```
 
@@ -433,9 +493,11 @@ Special: `explosive.tnt_minecart.fixedPower=bool` — force TNT minecart explosi
 
 ```json
 {
-  "regen.fast_interval": 10,
-  "regen.slow_interval": 80,
-  "regen.starvation_interval": 80
+  "values": {
+    "regen.fast_interval": 10,
+    "regen.slow_interval": 80,
+    "regen.starvation_interval": 80
+  }
 }
 ```
 
@@ -443,8 +505,10 @@ Special: `explosive.tnt_minecart.fixedPower=bool` — force TNT minecart explosi
 
 ```json
 {
-  "damage.invulnerability_ticks": 20,
-  "damage.hurt_animation_ticks": 10
+  "values": {
+    "damage.invulnerability_ticks": 20,
+    "damage.hurt_animation_ticks": 10
+  }
 }
 ```
 
@@ -452,12 +516,14 @@ Special: `explosive.tnt_minecart.fixedPower=bool` — force TNT minecart explosi
 
 ```json
 {
-  "tickWeather": true,
-  "tickTime": true,
-  "tick_raids": true,
-  "sleep_never_skip": false,
-  "tickBlockEntities": true,
-  "tickWorldBorder": true
+  "values": {
+    "tickWeather": true,
+    "tickTime": true,
+    "tick_raids": true,
+    "sleep_never_skip": false,
+    "tickBlockEntities": true,
+    "tickWorldBorder": true
+  }
 }
 ```
 
@@ -509,10 +575,12 @@ Toggle individual player tick behaviors:
 
 ```json
 {
-  "tickPlayer": true,
-  "tickFallStartPos": true,
-  "tickSculkShriekerWarningManager": true,
-  "tickVehicleInLavaRiding": true
+  "values": {
+    "tickPlayer": true,
+    "tickFallStartPos": true,
+    "tickSculkShriekerWarningManager": true,
+    "tickVehicleInLavaRiding": true
+  }
 }
 ```
 
@@ -522,9 +590,11 @@ Toggle individual player tick behaviors:
 
 ```json
 {
-  "allowPlaceSameFluidAndBlock": true,
-  "attribute_swap_fix.enabled": false,
-  "commands.forceRandomTick": false,
-  "equipment.drop_chance": 1.0
+  "values": {
+    "allowPlaceSameFluidAndBlock": true,
+    "attribute_swap_fix.enabled": false,
+    "commands.forceRandomTick": false,
+    "equipment.drop_chance": 1.0
+  }
 }
 ```

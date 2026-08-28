@@ -20,7 +20,8 @@ public abstract class RegistryKeyMixin<T> {
     //@Overwrite
 	@Override
 	public boolean equals(Object obj) {
-		if (Main.config.get("bugfix.RegistryKey.equalWithObjectOverload", false))
+		if (Main.config.get("bugfix.RegistryKey.equalWithObjectOverload", false)
+				|| Main.config.get("bugfix.RegistryKey.accurateHashCode", false))
 		    return this == obj;
 		if (!(obj instanceof RegistryKey<?> other)) return false;
 		return Objects.equals(this.getRegistry(), other.getRegistry())

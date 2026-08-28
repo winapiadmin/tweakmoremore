@@ -64,6 +64,7 @@
     "BannedIpListMixin",
     "BlockDropComponentsMixin",
     "DeathSaveMixin",
+    "PlayerManagerAccessor",
     "MinecartCollisionMixin",
     "NbtByteArraySkipMixin",
     "NbtIntArraySkipMixin",
@@ -79,9 +80,6 @@
     "DrawContextMixin",
     "InGameHudMixin",
     "MinecraftClientMixin"
-  ],
-  "accessors": [
-    "PlayerManagerAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

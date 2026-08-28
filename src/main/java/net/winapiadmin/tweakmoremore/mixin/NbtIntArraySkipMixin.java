@@ -17,7 +17,7 @@ public class NbtIntArraySkipMixin {
 
 	@Overwrite
 	public void skip(DataInput input, NbtSizeTracker tracker) throws IOException {
-                if (!Main.config.get("bugfix.NbtByteArray.assertLength",false)){
+		if (!Main.config.get("bugfix.NbtIntArray.assertLength",false)){
                         input.skipBytes(input.readInt()*4);return;
                 }
 		int length = input.readInt();

@@ -89,7 +89,7 @@ public class Main implements ModInitializer {
                                                                                                     ctx.getSource().sendError(Text.literal(name + " does not exist"));
                                                                                                     return 0;
                                                                                                 }
-                                                                                                ctx.getSource().sendFeedback(() -> Text.literal("Rule[" + name + "]==" + config.get(name)), true);
+                                                                                                ctx.getSource().sendFeedback(() -> Text.literal("Rule[" + name + "]=" + config.get(name)), true);
                                                                                                 return 1;
                                                                                             })
                                                                                             .then(argument("value", StringArgumentType.greedyString())
