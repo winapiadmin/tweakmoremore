@@ -1,9 +1,12 @@
 package net.winapiadmin.tweakmoremore.mixin;
+import java.util.List;
+import java.util.Optional;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.ExperienceDroppingBlock;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.component.*;
+import net.minecraft.component.type.*;
 import net.minecraft.component.type.ConsumableComponent;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.Item;
@@ -13,13 +16,9 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.entry.RegistryEntryInfo;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.intprovider.*;
-import net.minecraft.component.type.*;
 import net.winapiadmin.tweakmoremore.ExperienceDroppingBlockAccessor;
 import net.winapiadmin.tweakmoremore.Main;
 import org.spongepowered.asm.mixin.*;
-
-import java.util.List;
-import java.util.Optional;
 
 @Mixin(Registry.class)
 public interface RegistryMixin {
@@ -33,19 +32,16 @@ public interface RegistryMixin {
     @Overwrite
     @SuppressWarnings("unchecked")
     static <R, T extends R> RegistryEntry.Reference<R> registerReference(Registry<R> registry, RegistryKey<R> key, T entry) {
-        if (registry.equals(Registries.BLOCK) && entry instanceof ExperienceDroppingBlock experienceDroppingBlock){
-            setExp(experienceDroppingBlock,key.getValue().toShortString());
-        }
-        else if (registry.equals(Registries.ITEM) && entry instanceof Item item){
-            setConsumeTime(item,key.getValue().toShortString());
-            setCooldownTime(item,key.getValue().toShortString());
-            setStackSize(item,key.getValue().toShortString());
-        }
-        else if (registry.equals(Registries.POTION) && entry instanceof Potion pot){
-            entry = (T) modifyPotion(pot,key.getValue().toShortString());
-        }
-        else if (registry.equals(Registries.BLOCK) && entry instanceof Block block){
-            modifyBlockSettings(block.getSettings(),key.getValue().toShortString());
+        if (registry.equals(Registries.BLOCK) && entry instanceof ExperienceDroppingBlock experienceDroppingBlock) {
+            setExp(experienceDroppingBlock, key.getValue().toShortString());
+        } else if (registry.equals(Registries.ITEM) && entry instanceof Item item) {
+            setConsumeTime(item, key.getValue().toShortString());
+            setCooldownTime(item, key.getValue().toShortString());
+            setStackSize(item, key.getValue().toShortString());
+        } else if (registry.equals(Registries.POTION) && entry instanceof Potion pot) {
+            entry = (T)modifyPotion(pot, key.getValue().toShortString());
+        } else if (registry.equals(Registries.BLOCK) && entry instanceof Block block) {
+            modifyBlockSettings(block.getSettings(), key.getValue().toShortString());
         }
         return ((MutableRegistry<R>)registry).add(key, entry, RegistryEntryInfo.DEFAULT);
     }
@@ -60,19 +56,16 @@ public interface RegistryMixin {
     @Overwrite
     @SuppressWarnings("unchecked")
     static <V, T extends V> T register(Registry<V> registry, RegistryKey<V> key, T entry) {
-        if (registry.equals(Registries.BLOCK) && entry instanceof ExperienceDroppingBlock experienceDroppingBlock){
-            setExp(experienceDroppingBlock,key.getValue().toShortString());
-        }
-        else if (registry.equals(Registries.ITEM) && entry instanceof Item item){
-            setConsumeTime(item,key.getValue().toShortString());
-            setCooldownTime(item,key.getValue().toShortString());
-            setStackSize(item,key.getValue().toShortString());
-        }
-        else if (registry.equals(Registries.POTION) && entry instanceof Potion pot){
-            entry = (T) modifyPotion(pot,key.getValue().toShortString());
-        }
-        else if (registry.equals(Registries.BLOCK) && entry instanceof Block block){
-            modifyBlockSettings(block.getSettings(),key.getValue().toShortString());
+        if (registry.equals(Registries.BLOCK) && entry instanceof ExperienceDroppingBlock experienceDroppingBlock) {
+            setExp(experienceDroppingBlock, key.getValue().toShortString());
+        } else if (registry.equals(Registries.ITEM) && entry instanceof Item item) {
+            setConsumeTime(item, key.getValue().toShortString());
+            setCooldownTime(item, key.getValue().toShortString());
+            setStackSize(item, key.getValue().toShortString());
+        } else if (registry.equals(Registries.POTION) && entry instanceof Potion pot) {
+            entry = (T)modifyPotion(pot, key.getValue().toShortString());
+        } else if (registry.equals(Registries.BLOCK) && entry instanceof Block block) {
+            modifyBlockSettings(block.getSettings(), key.getValue().toShortString());
         }
         ((MutableRegistry<V>)registry).add(key, entry, RegistryEntryInfo.DEFAULT);
         return entry;
@@ -80,20 +73,20 @@ public interface RegistryMixin {
     @Unique
     @SuppressWarnings("deprecation")
     private static void modifyBlockSettings(AbstractBlock.Settings settings, String name) {
-        settings.collidable=Main.config.get("block."+name+".modifiers.collidable", settings.collidable);
-        settings.resistance = Main.config.get("block."+name+".modifiers.resistance", settings.resistance);
-        settings.hardness = Main.config.get("block."+name+".modifiers.hardness", settings.hardness);
-        settings.toolRequired = Main.config.get("block."+name+".modifiers.toolRequired", settings.toolRequired);
-        settings.randomTicks = Main.config.get("block."+name+".modifiers.randomTicks", settings.randomTicks);
-        settings.slipperiness = Main.config.get("block."+name+".modifiers.slipperiness", settings.slipperiness);
-        settings.velocityMultiplier = Main.config.get("block."+name+".modifiers.velocityMultiplier", settings.velocityMultiplier);
-        settings.jumpVelocityMultiplier = Main.config.get("block."+name+".modifiers.jumpVelocityMultiplier", settings.jumpVelocityMultiplier);
-        settings.opaque = Main.config.get("block."+name+".modifiers.opaque", settings.opaque);
-        settings.isAir = Main.config.get("block."+name+".modifiers.isAir", settings.isAir);
-        settings.burnable = Main.config.get("block."+name+".modifiers.burnable", settings.burnable);
-        settings.liquid = Main.config.get("block."+name+".modifiers.liquid", settings.liquid);
-        settings.forceNotSolid = Main.config.get("block."+name+".modifiers.forceNotSolid", settings.forceNotSolid);
-        settings.forceSolid = Main.config.get("block."+name+".modifiers.forceSolid", settings.forceSolid);
+        settings.collidable = Main.config.get("block." + name + ".modifiers.collidable", settings.collidable);
+        settings.resistance = Main.config.get("block." + name + ".modifiers.resistance", settings.resistance);
+        settings.hardness = Main.config.get("block." + name + ".modifiers.hardness", settings.hardness);
+        settings.toolRequired = Main.config.get("block." + name + ".modifiers.toolRequired", settings.toolRequired);
+        settings.randomTicks = Main.config.get("block." + name + ".modifiers.randomTicks", settings.randomTicks);
+        settings.slipperiness = Main.config.get("block." + name + ".modifiers.slipperiness", settings.slipperiness);
+        settings.velocityMultiplier = Main.config.get("block." + name + ".modifiers.velocityMultiplier", settings.velocityMultiplier);
+        settings.jumpVelocityMultiplier = Main.config.get("block." + name + ".modifiers.jumpVelocityMultiplier", settings.jumpVelocityMultiplier);
+        settings.opaque = Main.config.get("block." + name + ".modifiers.opaque", settings.opaque);
+        settings.isAir = Main.config.get("block." + name + ".modifiers.isAir", settings.isAir);
+        settings.burnable = Main.config.get("block." + name + ".modifiers.burnable", settings.burnable);
+        settings.liquid = Main.config.get("block." + name + ".modifiers.liquid", settings.liquid);
+        settings.forceNotSolid = Main.config.get("block." + name + ".modifiers.forceNotSolid", settings.forceNotSolid);
+        settings.forceSolid = Main.config.get("block." + name + ".modifiers.forceSolid", settings.forceSolid);
         PistonBehavior current = settings.pistonBehavior;
 
         String defaultPB = (current == null) ? "NULL" : current.name();
@@ -114,7 +107,7 @@ public interface RegistryMixin {
         }
 
         settings.pistonBehavior = parsed;
-        settings.dynamicBounds = Main.config.get("block."+name+".modifiers.dynamicBounds", settings.dynamicBounds);
+        settings.dynamicBounds = Main.config.get("block." + name + ".modifiers.dynamicBounds", settings.dynamicBounds);
     }
 
     @Unique
@@ -129,8 +122,7 @@ public interface RegistryMixin {
             else
                 effectName = inst.getTranslationKey();
 
-            inst.duration = Main.config.get(
-                    "potion."+name + ".modifiers." + effectName + ".duration", inst.getDuration());
+            inst.duration = Main.config.get("potion." + name + ".modifiers." + effectName + ".duration", inst.getDuration());
         }
 
         StatusEffectInstance[] array = effects.toArray(new StatusEffectInstance[0]);
@@ -138,97 +130,72 @@ public interface RegistryMixin {
     }
 
     @Unique
-    private static  void setConsumeTime(Item item, String id) {
+    private static void setConsumeTime(Item item, String id) {
         ComponentMap original = item.getComponents();
         ConsumableComponent consumable = original.get(DataComponentTypes.CONSUMABLE);
         FoodComponent food = original.get(DataComponentTypes.FOOD);
 
         if (consumable != null) {
-            float newSeconds = Main.config.get("food."+id+".eattime", consumable.consumeSeconds());
-            consumable = new ConsumableComponent(
-                    newSeconds, consumable.useAction(), consumable.sound(),
-                    consumable.hasConsumeParticles(), consumable.onConsumeEffects());
+            float newSeconds = Main.config.get("food." + id + ".eattime", consumable.consumeSeconds());
+            consumable = new ConsumableComponent(newSeconds, consumable.useAction(), consumable.sound(), consumable.hasConsumeParticles(), consumable.onConsumeEffects());
         }
 
         if (food != null) {
-            int newNutrition = Main.config.get("food."+id+".nutrition", food.nutrition());
-            float newSaturation = Main.config.get("food."+id+".saturation", food.saturation());
-            boolean newAlwaysEdible = Main.config.get("food."+id+".alwaysEdible", food.canAlwaysEat());
-            FoodComponent.Builder builder = new FoodComponent.Builder()
-                    .nutrition(newNutrition)
-                    .saturationModifier(newSaturation);
+            int newNutrition = Main.config.get("food." + id + ".nutrition", food.nutrition());
+            float newSaturation = Main.config.get("food." + id + ".saturation", food.saturation());
+            boolean newAlwaysEdible = Main.config.get("food." + id + ".alwaysEdible", food.canAlwaysEat());
+            FoodComponent.Builder builder = new FoodComponent.Builder().nutrition(newNutrition).saturationModifier(newSaturation);
 
             if (newAlwaysEdible) {
-                builder=builder.alwaysEdible();
+                builder = builder.alwaysEdible();
             }
 
             food = builder.build();
         }
 
         // build final map once
-        ComponentMap updated = ComponentMap.builder()
-                .addAll(original)
-                .add(DataComponentTypes.CONSUMABLE, consumable)
-                .add(DataComponentTypes.FOOD, food)
-                .build();
+        ComponentMap updated = ComponentMap.builder().addAll(original).add(DataComponentTypes.CONSUMABLE, consumable).add(DataComponentTypes.FOOD, food).build();
 
-        ((ItemAccessor) item).setComponents(updated);
+        ((ItemAccessor)item).setComponents(updated);
     }
     @Unique
     private static void setCooldownTime(Item item, String id) {
         ComponentMap originalComponents = item.getComponents();
         UseCooldownComponent base = originalComponents.get(DataComponentTypes.USE_COOLDOWN);
-        base=base==null?new UseCooldownComponent(0.0f):base;
-        Optional<Identifier> cooldownGroup=base.cooldownGroup();
+        base = base == null ? new UseCooldownComponent(0.0f) : base;
+        Optional<Identifier> cooldownGroup = base.cooldownGroup();
         float newSeconds = Main.config.get("item." + id + ".useCooldown", base.seconds());
 
-        UseCooldownComponent modified = new UseCooldownComponent(
-                newSeconds, cooldownGroup);
+        UseCooldownComponent modified = new UseCooldownComponent(newSeconds, cooldownGroup);
 
-        ComponentMap updatedMap = ComponentMap.builder()
-                .addAll(originalComponents)
-                .add(DataComponentTypes.USE_COOLDOWN, modified)
-                .build();
+        ComponentMap updatedMap = ComponentMap.builder().addAll(originalComponents).add(DataComponentTypes.USE_COOLDOWN, modified).build();
 
-        ((ItemAccessor) item).setComponents(updatedMap);
+        ((ItemAccessor)item).setComponents(updatedMap);
     }
     @Unique
     private static void setStackSize(Item item, String id) {
         ComponentMap originalComponents = item.getComponents();
-        if (originalComponents.get(DataComponentTypes.MAX_DAMAGE)!=null) {
-            Integer maxDamage=originalComponents.get(DataComponentTypes.MAX_DAMAGE);
-            ComponentMap updatedMap = ComponentMap.builder()
-                    .addAll(originalComponents)
-                    .add(DataComponentTypes.MAX_DAMAGE, Main.config.get("tool."+id + ".maxDamage", maxDamage))
-                    .build();
+        if (originalComponents.get(DataComponentTypes.MAX_DAMAGE) != null) {
+            Integer maxDamage = originalComponents.get(DataComponentTypes.MAX_DAMAGE);
+            ComponentMap updatedMap = ComponentMap.builder().addAll(originalComponents).add(DataComponentTypes.MAX_DAMAGE, Main.config.get("tool." + id + ".maxDamage", maxDamage)).build();
 
-            ((ItemAccessor) item).setComponents(updatedMap);
+            ((ItemAccessor)item).setComponents(updatedMap);
             return;
         }
-        Integer stackSize=originalComponents.get(DataComponentTypes.MAX_STACK_SIZE);
-        ComponentMap updatedMap = ComponentMap.builder()
-                .addAll(originalComponents)
-                .add(DataComponentTypes.MAX_STACK_SIZE, Main.config.get("item."+id + ".stackSize", stackSize))
-                .build();
+        Integer stackSize = originalComponents.get(DataComponentTypes.MAX_STACK_SIZE);
+        ComponentMap updatedMap = ComponentMap.builder().addAll(originalComponents).add(DataComponentTypes.MAX_STACK_SIZE, Main.config.get("item." + id + ".stackSize", stackSize)).build();
 
-        ((ItemAccessor) item).setComponents(updatedMap);
+        ((ItemAccessor)item).setComponents(updatedMap);
     }
 
     @Unique
     private static void setExp(ExperienceDroppingBlock xp, String id) {
         IntProvider prov = xp.experienceDropped;
         if (prov instanceof ConstantIntProvider c) {
-            prov = UniformIntProvider.create(
-                    Main.config.get("xpDroppingBlock."+id + ".minExp", c.getMin()),
-                    Main.config.get("xpDroppingBlock."+id + ".maxExp", c.getMax())
-            );
+            prov = UniformIntProvider.create(Main.config.get("xpDroppingBlock." + id + ".minExp", c.getMin()), Main.config.get("xpDroppingBlock." + id + ".maxExp", c.getMax()));
+        } else if (prov instanceof UniformIntProvider u) {
+            prov = UniformIntProvider.create(Main.config.get("xpDroppingBlock." + id + ".minExp", u.getMin()), Main.config.get("xpDroppingBlock." + id + ".maxExp", u.getMax()));
         }
-        else if (prov instanceof UniformIntProvider u) {
-            prov = UniformIntProvider.create(
-                    Main.config.get("xpDroppingBlock."+id + ".minExp", u.getMin()),
-                    Main.config.get("xpDroppingBlock."+id + ".maxExp", u.getMax())
-            );
-        }
-        ((ExperienceDroppingBlockAccessor) xp).tweakmoremore$setExperienceDropped(prov);
+        ((ExperienceDroppingBlockAccessor)xp).tweakmoremore$setExperienceDropped(prov);
     }
 }

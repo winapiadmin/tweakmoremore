@@ -8,34 +8,29 @@ import java.util.Collection;
 
 public class ConfigKeyArgument implements ArgumentType<String> {
 
-  public static ConfigKeyArgument key() { return new ConfigKeyArgument(); }
+    public static ConfigKeyArgument key() { return new ConfigKeyArgument(); }
 
-  @Override
-  public String parse(StringReader reader) throws CommandSyntaxException {
-    StringBuilder result = new StringBuilder();
-    while (reader.canRead()) {
-      char c = reader.peek();
-      if (isValidKeyChar(c)) {
-        result.append(c);
-        reader.skip();
-      } else
-        break;
+    @Override
+    public String parse(StringReader reader) throws CommandSyntaxException {
+        StringBuilder result = new StringBuilder();
+        while (reader.canRead()) {
+            char c = reader.peek();
+            if (isValidKeyChar(c)) {
+                result.append(c);
+                reader.skip();
+            } else
+                break;
+        }
+        if (result.isEmpty()) {
+            throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherParseException().create("Expected a rule key");
+        }
+        return result.toString();
     }
-    if (result.isEmpty()) {
-      throw CommandSyntaxException.BUILT_IN_EXCEPTIONS
-          .dispatcherParseException()
-          .create("Expected a rule key");
+
+    private boolean isValidKeyChar(char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_' || c == ':' || c == '-' || c == '.' || c == '[' || c == ']' || c == '<' || c == '>' || c == '+' || c == '*' || c == '/'; }
+
+    @Override
+    public Collection<String> getExamples() {
+        return Arrays.asList("rule_name", "modid:ruleName", "entity.damageEquipmentBehavior<explosion>.damageExpression");
     }
-    return result.toString();
-  }
-
-  private boolean isValidKeyChar(char c) {
-    return Character.isLetterOrDigit(c) || c == '_' || c == ':' || c == '-' ||
-        c == '.' || c == '[' || c == ']';
-  }
-
-  @Override
-  public Collection<String> getExamples() {
-    return Arrays.asList("rule_name", "modid:ruleName");
-  }
 }

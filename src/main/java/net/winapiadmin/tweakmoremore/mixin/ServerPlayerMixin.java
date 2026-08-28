@@ -10,40 +10,39 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayerEntity.class)
 public class ServerPlayerMixin {
-  @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
-  public void tick(CallbackInfo ci) {
-    if (!Main.config.get("tickPlayer", true))
-      ci.cancel();
-  }
-  @Redirect(method = "tick",
-            at = @At(value = "INVOKE",
-                     target = "Lnet/minecraft/block/entity/"
-                              + "SculkShriekerWarningManager;tick()V"))
-  public void
-  tickSculkShriekerWarningManager(SculkShriekerWarningManager instance) {
-    if (!Main.config.get("tickSculkShriekerWarningManager", true))
-      return;
-    instance.tick();
-  }
-  @Redirect(method = "tick",
-            at = @At(value = "INVOKE",
-                     target = "Lnet/minecraft/server/network/"
-                              + "ServerPlayerEntity;tickFallStartPos()V"))
-  public void
-  tickFallStartPos(ServerPlayerEntity instance) {
-    if (!Main.config.get("tickFallStartPos", true))
-      return;
-    instance.tickFallStartPos();
-  }
-  @Redirect(method = "tick",
-            at = @At(value = "INVOKE",
-                     target = "Lnet/minecraft/server/network/"
-                              +
-                              "ServerPlayerEntity;tickVehicleInLavaRiding()V"))
-  public void
-  tickVehicleInLavaRiding(ServerPlayerEntity instance) {
-    if (!Main.config.get("tickVehicleInLavaRiding", true))
-      return;
-    instance.tickVehicleInLavaRiding();
-  }
+    @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
+    public void tick(CallbackInfo ci) {
+        if (!Main.config.get("tickPlayer", true))
+            ci.cancel();
+    }
+    @Redirect(method = "tick",
+              at = @At(value = "INVOKE",
+                       target = "Lnet/minecraft/block/entity/"
+                                + "SculkShriekerWarningManager;tick()V"))
+    public void
+    tickSculkShriekerWarningManager(SculkShriekerWarningManager instance) {
+        if (!Main.config.get("tickSculkShriekerWarningManager", true))
+            return;
+        instance.tick();
+    }
+    @Redirect(method = "tick",
+              at = @At(value = "INVOKE",
+                       target = "Lnet/minecraft/server/network/"
+                                + "ServerPlayerEntity;tickFallStartPos()V"))
+    public void
+    tickFallStartPos(ServerPlayerEntity instance) {
+        if (!Main.config.get("tickFallStartPos", true))
+            return;
+        instance.tickFallStartPos();
+    }
+    @Redirect(method = "tick",
+              at = @At(value = "INVOKE",
+                       target = "Lnet/minecraft/server/network/"
+                                + "ServerPlayerEntity;tickVehicleInLavaRiding()V"))
+    public void
+    tickVehicleInLavaRiding(ServerPlayerEntity instance) {
+        if (!Main.config.get("tickVehicleInLavaRiding", true))
+            return;
+        instance.tickVehicleInLavaRiding();
+    }
 }

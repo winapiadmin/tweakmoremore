@@ -5,9 +5,10 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import it.unimi.dsi.fastutil.longs.Long2FloatMap;
 import it.unimi.dsi.fastutil.longs.Long2FloatOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
+import java.util.*;
 import net.minecraft.block.BlockState;
 import net.minecraft.command.EntitySelector;
+import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.*;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
@@ -21,17 +22,13 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.*;
 import net.minecraft.world.explosion.*;
-import net.minecraft.command.argument.EntityArgumentType;
 import net.winapiadmin.tweakmoremore.Main;
-
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.*;
 
 @Mixin(ExplosionImpl.class)
 public abstract class ExplosionImplMixin {
@@ -49,11 +46,9 @@ public abstract class ExplosionImplMixin {
     @Unique private String name;
     @Unique private Map<BlockPos, Float> cachedField;
     @Unique
-    private static Collection<? extends Entity> parseSelector(
-            ServerCommandSource source,
-            String selector
-    ) throws CommandSyntaxException {
-        if (selector.isEmpty()) return List.of();
+    private static Collection<? extends Entity> parseSelector(ServerCommandSource source, String selector) throws CommandSyntaxException {
+        if (selector.isEmpty())
+            return List.of();
         StringReader reader = new StringReader(selector);
 
         EntityArgumentType arg = EntityArgumentType.entities();
@@ -66,12 +61,7 @@ public abstract class ExplosionImplMixin {
     /* ------------------------------------------------------------ */
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void afterInit(ServerWorld world, @Nullable Entity entity,
-                           @Nullable DamageSource damageSource,
-                           @Nullable ExplosionBehavior behavior,
-                           Vec3d pos, float power, boolean createFire,
-                           Explosion.DestructionType destructionType,
-                           CallbackInfo ci) {
+    private void afterInit(ServerWorld world, @Nullable Entity entity, @Nullable DamageSource damageSource, @Nullable ExplosionBehavior behavior, Vec3d pos, float power, boolean createFire, Explosion.DestructionType destructionType, CallbackInfo ci) {
 
         if (entity != null) {
             name = Registries.ENTITY_TYPE.getId(entity.getType()).toShortString();
@@ -90,17 +80,18 @@ public abstract class ExplosionImplMixin {
             }
         }
 
-        if (name == null) return;
+        if (name == null)
+            return;
         // vanilla behavior for tnt minecarts: randomize a bit of explosion power
-        if (name.equals("tnt_minecart") && Main.config.get("explosive.tnt_minecart.fixedPower",false))
-            this.power = Main.config.get("explosive."+name + "_explosionPower", power);
-        this.createFire = Main.config.get("explosive."+name + "_createFire", createFire);
+        if (name.equals("tnt_minecart") && Main.config.get("explosive.tnt_minecart.fixedPower", false))
+            this.power = Main.config.get("explosive." + name + "_explosionPower", power);
+        this.createFire = Main.config.get("explosive." + name + "_createFire", createFire);
 
         try {
-            String stored = Main.config.get("explosive."+name + "_destroyBlocks",
-                    destructionType.name());
+            String stored = Main.config.get("explosive." + name + "_destroyBlocks", destructionType.name());
             this.destructionType = Explosion.DestructionType.valueOf(stored);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     /* ------------------------------------------------------------ */
@@ -109,22 +100,22 @@ public abstract class ExplosionImplMixin {
 
     @Unique
     private String damageMode() {
-        return Main.config.get("explosive."+name + "_calcDamageMode", "vanilla");
+        return Main.config.get("explosive." + name + "_calcDamageMode", "vanilla");
     }
 
     @Unique
     private String blockMode() {
-        return Main.config.get("explosive."+name + "_destroyBlocksLogic", "vanilla");
+        return Main.config.get("explosive." + name + "_destroyBlocksLogic", "vanilla");
     }
 
     @Unique
     private String damageEntitiesMode() {
-        return Main.config.get("explosive."+name + "_damageEntitiesLogic", "vanilla");
+        return Main.config.get("explosive." + name + "_damageEntitiesLogic", "vanilla");
     }
 
     @Unique
     private boolean damageEntitiesEnabled() {
-        return Main.config.get("explosive."+name + "_damageEntities", true);
+        return Main.config.get("explosive." + name + "_damageEntities", true);
     }
 
     /* ------------------------------------------------------------ */
@@ -138,11 +129,9 @@ public abstract class ExplosionImplMixin {
             return ExplosionImpl.calculateReceivedDamage(pos, entity);
 
         return switch (damageMode()) {
-
             case "off" -> 0f;
 
-            case "fixed" ->
-                    Main.config.get("explosive."+name + "_fixedDamage", 5.0F);
+            case "fixed" -> Main.config.get("explosive." + name + "_fixedDamage", 5.0F);
 
             case "new" -> {
 
@@ -170,9 +159,7 @@ public abstract class ExplosionImplMixin {
     /* ------------------------------------------------------------ */
 
     @Unique
-    private static float calculateReceivedDamage(Entity entity,
-                                                 Map<BlockPos, Float> energyMap,
-                                                 float initialEnergy) {
+    private static float calculateReceivedDamage(Entity entity, Map<BlockPos, Float> energyMap, float initialEnergy) {
 
         Box box = entity.getBoundingBox();
 
@@ -198,7 +185,8 @@ public abstract class ExplosionImplMixin {
                     samples++;
                 }
 
-        if (samples == 0) return 0f;
+        if (samples == 0)
+            return 0f;
 
         float avgEnergy = energySum / samples;
 
@@ -249,12 +237,9 @@ public abstract class ExplosionImplMixin {
 
                 BlockState state = world.getBlockState(mutable);
 
-                float resistance =
-                        state.isAir() ? 0f :
-                                state.getBlock().getBlastResistance();
+                float resistance = state.isAir() ? 0f : state.getBlock().getBlastResistance();
 
-                float nextEnergy =
-                        currentEnergy - resistance * 0.3f - 0.225f;
+                float nextEnergy = currentEnergy - resistance * 0.3f - 0.225f;
 
                 if (nextEnergy <= 0f)
                     continue;
@@ -271,8 +256,7 @@ public abstract class ExplosionImplMixin {
         }
 
         for (Long2FloatMap.Entry entry : energy.long2FloatEntrySet())
-            result.put(BlockPos.fromLong(entry.getLongKey()),
-                    entry.getFloatValue());
+            result.put(BlockPos.fromLong(entry.getLongKey()), entry.getFloatValue());
 
         return result;
     }
@@ -284,89 +268,67 @@ public abstract class ExplosionImplMixin {
     @Unique
     private void damageEntities() throws CommandSyntaxException {
 
-        if (name == null) return;
-        if (!damageEntitiesEnabled()) return;
-        if (power < 1.0E-5F) return;
+        if (name == null)
+            return;
+        if (!damageEntitiesEnabled())
+            return;
+        if (power < 1.0E-5F)
+            return;
 
-        Explosion self = (Explosion) this;
+        Explosion self = (Explosion)this;
 
         float radius = power * 2f;
 
-        Box box = new Box(
-                pos.x - radius - 1,
-                pos.y - radius - 1,
-                pos.z - radius - 1,
-                pos.x + radius + 1,
-                pos.y + radius + 1,
-                pos.z + radius + 1
-        );
-        String includeEntitiesSelector=Main.config.get("explosive."+name+"_damageEntitiesInclude", "@e");
-        String excludeEntitiesSelector=Main.config.get("explosive."+name+"_damageEntitiesExclude", "");
-        ServerCommandSource source= Objects.requireNonNull(world.getServer()).getCommandSource();
+        Box box = new Box(pos.x - radius - 1, pos.y - radius - 1, pos.z - radius - 1, pos.x + radius + 1, pos.y + radius + 1, pos.z + radius + 1);
+        String includeEntitiesSelector = Main.config.get("explosive." + name + "_damageEntitiesInclude", "@e");
+        String excludeEntitiesSelector = Main.config.get("explosive." + name + "_damageEntitiesExclude", "");
+        ServerCommandSource source = Objects.requireNonNull(world.getServer()).getCommandSource();
         Set<Entity> targets = new HashSet<>(world.getOtherEntities(this.entity, box));
-        try{
+        try {
             targets.addAll(parseSelector(source, includeEntitiesSelector));
-        }
-        catch(CommandSyntaxException e){
+        } catch (CommandSyntaxException e) {
             Main.LOGGER.warn("explosive.{}_damageEntitiesInclude option is illegal {}", name, e);
             targets.addAll(parseSelector(source, "@e"));
         }
-        try{
+        try {
             parseSelector(source, excludeEntitiesSelector).forEach(targets::remove);
-        }
-        catch(CommandSyntaxException e){
+        } catch (CommandSyntaxException e) {
             Main.LOGGER.warn("explosive.{}_damageEntitiesExclude option is illegal {}", name, e);
         }
         for (Entity entity : targets) {
             if (entity.isImmuneToExplosion(self))
                 continue;
 
-            double distance =
-                    Math.sqrt(entity.squaredDistanceTo(pos)) / radius;
+            double distance = Math.sqrt(entity.squaredDistanceTo(pos)) / radius;
 
             if (distance > 1.0)
                 continue;
 
-            Vec3d eye = entity instanceof TntEntity
-                    ? entity.getEntityPos()
-                    : entity.getEyePos();
+            Vec3d eye = entity instanceof TntEntity ? entity.getEntityPos() : entity.getEyePos();
 
             Vec3d dir = eye.subtract(pos).normalize();
 
             boolean damage = behavior.shouldDamage(self, entity);
             float knockbackMod = behavior.getKnockbackModifier(entity);
 
-            float exposure =
-                    (!damage && knockbackMod == 0)
-                            ? 0
-                            : damageCalculation(pos, entity);
+            float exposure = (!damage && knockbackMod == 0) ? 0 : damageCalculation(pos, entity);
 
             if (damage)
-                entity.damage(world, damageSource,
-                        behavior.calculateDamage(self, entity, exposure));
+                entity.damage(world, damageSource, behavior.calculateDamage(self, entity, exposure));
 
-            double resist =
-                    entity instanceof LivingEntity living
-                            ? living.getAttributeValue(
-                            EntityAttributes.EXPLOSION_KNOCKBACK_RESISTANCE)
-                            : 0;
+            double resist = entity instanceof LivingEntity living ? living.getAttributeValue(EntityAttributes.EXPLOSION_KNOCKBACK_RESISTANCE) : 0;
 
-            double strength =
-                    (1 - distance) * exposure * knockbackMod * (1 - resist);
+            double strength = (1 - distance) * exposure * knockbackMod * (1 - resist);
 
             Vec3d velocity = dir.multiply(strength);
 
             entity.addVelocity(velocity);
 
-            if (entity.getType().isIn(EntityTypeTags.REDIRECTABLE_PROJECTILE)
-                    && entity instanceof ProjectileEntity projectile) {
+            if (entity.getType().isIn(EntityTypeTags.REDIRECTABLE_PROJECTILE) && entity instanceof ProjectileEntity projectile) {
 
                 projectile.setOwner(damageSource.getAttacker());
 
-            } else if (entity instanceof PlayerEntity player
-                    && !player.isSpectator()
-                    && (!player.isCreative()
-                    || !player.getAbilities().flying)) {
+            } else if (entity instanceof PlayerEntity player && !player.isSpectator() && (!player.isCreative() || !player.getAbilities().flying)) {
 
                 knockbackByPlayer.put(player, velocity);
             }
@@ -374,7 +336,6 @@ public abstract class ExplosionImplMixin {
             entity.onExplodedBy(this.entity);
         }
     }
-
 
     /* ------------------------------------------------------------ */
     /* FIBONACCI SPHERE                                              */
@@ -395,21 +356,25 @@ public abstract class ExplosionImplMixin {
 
         return new Vec3d(x, y, z);
     }
-    @Redirect(method="explode()I", at=@At(value="INVOKE", target="Lnet/minecraft/world/explosion/ExplosionImpl;damageEntities()V"))
+    @Redirect(method = "explode()I", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/explosion/ExplosionImpl;damageEntities()V"))
     private void damageEntities_(ExplosionImpl instance) throws CommandSyntaxException {
-        switch(damageEntitiesMode()){
-            case "off" -> {}
-            case "new" -> damageEntities();
-            default -> instance.damageEntities();
+        switch (damageEntitiesMode()) {
+        case "off" -> {
+        }
+        case "new" -> damageEntities();
+        default -> instance.damageEntities();
         }
     }
     /* ------------------------------------------------------------ */
     /* BLOCK DESTRUCTION                                             */
     /* ------------------------------------------------------------ */
-    @Redirect(method="explode()I", at=@At(value="INVOKE", target="Lnet/minecraft/world/explosion/ExplosionImpl;getBlocksToDestroy()Ljava/util/List;"))
-    private List<BlockPos> getBlocksToDestroy_(ExplosionImpl instance){
+    @Redirect(method = "explode()I",
+              at = @At(value = "INVOKE",
+                       target = "Lnet/minecraft/world/explosion/"
+                                + "ExplosionImpl;getBlocksToDestroy()Ljava/util/List;"))
+    private List<BlockPos>
+    getBlocksToDestroy_(ExplosionImpl instance) {
         return switch (blockMode()) {
-
             case "off" -> new ObjectArrayList<>();
 
             case "new" -> {
@@ -424,18 +389,13 @@ public abstract class ExplosionImplMixin {
                     Vec3d dir = fibonacciDirection(i, rays);
 
                     /* small direction jitter */
-                    dir = dir.add(
-                            (random.nextDouble() - 0.5) * 0.04,
-                            (random.nextDouble() - 0.5) * 0.04,
-                            (random.nextDouble() - 0.5) * 0.04
-                    ).normalize();
+                    dir = dir.add((random.nextDouble() - 0.5) * 0.04, (random.nextDouble() - 0.5) * 0.04, (random.nextDouble() - 0.5) * 0.04).normalize();
 
                     double dx = dir.x;
                     double dy = dir.y;
                     double dz = dir.z;
 
-                    float energy =
-                            power * (0.7F + random.nextFloat() * 0.6F);
+                    float energy = power * (0.7F + random.nextFloat() * 0.6F);
 
                     /* jittered starting position */
                     double x = pos.x + (random.nextDouble() - 0.5) * 0.2;
@@ -452,19 +412,12 @@ public abstract class ExplosionImplMixin {
                         BlockState state = world.getBlockState(blockPos);
                         FluidState fluid = world.getFluidState(blockPos);
 
-                        Optional<Float> resistance =
-                                behavior.getBlastResistance(
-                                        (Explosion) this,
-                                        world, blockPos, state, fluid
-                                );
+                        Optional<Float> resistance = behavior.getBlastResistance((Explosion)this, world, blockPos, state, fluid);
 
                         if (resistance.isPresent())
                             energy -= (resistance.get() + 0.3F) * 0.3F;
 
-                        if (energy > 0 &&
-                                behavior.canDestroyBlock(
-                                        (Explosion) this,
-                                        world, blockPos, state, energy)) {
+                        if (energy > 0 && behavior.canDestroyBlock((Explosion)this, world, blockPos, state, energy)) {
 
                             set.add(blockPos);
                         }

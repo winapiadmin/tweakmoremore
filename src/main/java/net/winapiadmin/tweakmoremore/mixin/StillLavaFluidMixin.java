@@ -8,12 +8,12 @@ import org.spongepowered.asm.mixin.Overwrite;
 
 @Mixin(LavaFluid.Still.class)
 public class StillLavaFluidMixin {
-  /**
-   * @author
-   * @reason
-   */
-  @Overwrite
-  public int getLevel(FluidState state) {
-    return Main.config.get("stillLavaFluidLevel", 8);
-  }
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public int getLevel(FluidState state) {
+        return Main.config.get("stillLavaFluidLevel", 8);
+    }
 }

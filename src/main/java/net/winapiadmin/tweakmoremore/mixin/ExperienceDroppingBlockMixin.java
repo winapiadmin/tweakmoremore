@@ -9,11 +9,9 @@ import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(ExperienceDroppingBlock.class)
-public abstract class ExperienceDroppingBlockMixin
-        implements ExperienceDroppingBlockAccessor {
+public abstract class ExperienceDroppingBlockMixin implements ExperienceDroppingBlockAccessor {
 
-    @Shadow @Final @Mutable
-    private IntProvider experienceDropped;
+    @Shadow @Final @Mutable private IntProvider experienceDropped;
 
     @Override
     public void tweakmoremore$setExperienceDropped(IntProvider provider) {

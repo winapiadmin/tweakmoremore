@@ -27,6 +27,7 @@ dependencies {
 
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
     implementation "net.objecthunter:exp4j:0.4.8"
     include "net.objecthunter:exp4j:0.4.8"
 }
@@ -92,4 +93,5 @@ publishing {
 }
 loom {
     accessWidenerPath = file("src/main/resources/tweakmoremore.accesswidener")
+
 }

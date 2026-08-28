@@ -1,11 +1,15 @@
 {
   "schemaVersion": 1,
   "id": "tweakmoremore",
-  "version": "${version}",
   "name": "tweakmoremore",
-  "description": "",
-  "authors": [],
-  "contact": {},
+  "version": "${version}",
+  "description": "tweaks to every extent of minecraft",
+  "authors": ["winapiadmin"],
+  "contact": {
+    "homepage": "https://modrinth.com/mod/tweakmoremore/",
+    "issues": "https://github.com/winapiadmin/tweakmoremore/issues",
+    "sources": "https://github.com/winapiadmin/tweakmoremore"
+  },
   "license": "All-Rights-Reserved",
   "icon": "icon.png",
   "environment": "*",
@@ -25,7 +29,21 @@
     "minecraft": "${minecraft_version}"
   },
   "breaks": {
-    "tweakmoremore": "<3.0.0"
+    "tweakmoremore": "<3.0.0",
+    "stackable": "*",
+    "stackable-items": "*",
+    "shulkerfix": "*",
+    "stackablepotions": "*",
+    "stackable_potions": "*",
+    "stackable-potions": "*",
+    "mr_stackable_totems": "*",
+    "stackaletotems": "*",
+    "stackable_totems": "*",
+    "mr_stackable_item": "*",
+    "stackabletools": "*",
+    "sensible_stackables": "*",
+    "mr_uiinpuis_stackablepearls":"*",
+    "stack99": "*"
   },
   "accessWidener": "tweakmoremore.accesswidener"
 }

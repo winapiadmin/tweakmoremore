@@ -1,20 +1,19 @@
 // credit to stackable127, tuned for convenience
 package net.winapiadmin.tweakmoremore.mixin;
 
+import java.util.List;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.List;
 
 /**
  * @author fmp
@@ -33,6 +32,5 @@ public abstract class ToolTipMixin {
         }
     }
 
-    @Shadow
-    public abstract int getCount();
+    @Shadow public abstract int getCount();
 }
