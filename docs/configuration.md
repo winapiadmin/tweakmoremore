@@ -13,8 +13,8 @@ This guide explains how to configure tweakmoremore through the JSON config file.
 {
   "DataVersion": 2,
   "mob_cap.chunk_area": 289,
-  "item.diamond_sword.maxCountPerStack": 99,
-  "block.diamond_ore.modifiers.hardness": 3.0
+  "maceSmashMinFallDistance": 1.5,
+  "attribute.max_health.max": 1024.0
 }
 ```
 
@@ -25,6 +25,7 @@ This guide explains how to configure tweakmoremore through the JSON config file.
 | Boolean | `true`, `false` |
 | Integer | `64`, `200` |
 | Float | `1.5f`, `0.8f` |
+| Double | `1.5`, `1024.0` |
 | String | `"formula_expression"` |
 
 ## Expression Formulas
@@ -33,20 +34,20 @@ Some config options accept mathematical expressions using the exp4j library.
 
 ### Available Variables
 
-- `experienceLevel` - Player's experience level
-- `totalExperience` - Player's total experience points
-- `experienceProgress` - Current XP progress (0.0-1.0)
-- `beaconLevel` - Beacon pyramid level (0-4)
-- `amount` - Damage amount
-- `n` - Number of slots (for equipment damage)
+- `experienceLevel` — Player's experience level
+- `totalExperience` — Player's total experience points
+- `experienceProgress` — Current XP progress (0.0-1.0)
+- `beaconLevel` — Beacon pyramid level (0-4)
+- `amount` — Damage amount
+- `n` — Number of slots (for equipment damage)
 
 ### Functions
 
-- `min(a, b)` - Minimum of a and b
-- `max(a, b)` - Maximum of a and b
-- `randInt(min, max)` - Random integer in range
-- `random` - Random double (0.0-1.0)
-- `random(min, max)` - Random double in range
+- `min(a, b)` — Minimum of a and b
+- `max(a, b)` — Maximum of a and b
+- `randInt(min, max)` — Random integer in range
+- `random` — Random double (0.0-1.0)
+- `random(min, max)` — Random double in range
 
 ### Examples
 
@@ -59,127 +60,471 @@ Some config options accept mathematical expressions using the exp4j library.
 }
 ```
 
+---
+
 ## Dynamic Block Properties
 
 Properties can be customized per-block using the naming pattern:
 
+```json
+{
+  "block.<block_name>.modifiers.<property>": <value>
+}
 ```
-block.<block_name>.modifiers.<property>
+
+```json
+{
+  "block.<block_name>.modifiers.collidable": true,
+  "block.<block_name>.modifiers.resistance": 6.0,
+  "block.<block_name>.modifiers.hardness": 5.0,
+  "block.<block_name>.modifiers.toolRequired": false,
+  "block.<block_name>.modifiers.randomTicks": false,
+  "block.<block_name>.modifiers.slipperiness": 0.6,
+  "block.<block_name>.modifiers.velocityMultiplier": 1.0,
+  "block.<block_name>.modifiers.jumpVelocityMultiplier": 1.0,
+  "block.<block_name>.modifiers.pistonBehavior": "NORMAL",
+  "block.<block_name>.modifiers.dynamicBounds": false,
+  "block.<block_name>.modifiers.opaque": true,
+  "block.<block_name>.modifiers.isAir": false,
+  "block.<block_name>.modifiers.burnable": false,
+  "block.<block_name>.modifiers.liquid": false,
+  "block.<block_name>.modifiers.forceNotSolid": false,
+  "block.<block_name>.modifiers.forceSolid": false
+}
 ```
 
-### Available Block Properties
-
-| Property | Type |
-|----------|------|
-| `collidable` | boolean |
-| `resistance` | float |
-| `hardness` | float |
-| `toolRequired` | boolean |
-| `randomTicks` | boolean |
-| `slipperiness` | float |
-| `velocityMultiplier` | float |
-| `jumpVelocityMultiplier` | float |
-| `opaque` | boolean |
-| `isAir` | boolean |
-| `burnable` | boolean |
-| `liquid` | boolean |
-| `forceNotSolid` | boolean |
-| `forceSolid` | boolean |
-| `pistonBehavior` | string |
-| `dynamicBounds` | boolean |
-
-### Piston Behavior Values
-
-- `NORMAL`
-- `DESTROY`
-- `PUSH_ONLY`
-- `NULL`
+Piston behavior values: `NORMAL`, `DESTROY`, `PUSH_ONLY`, `BLOCK`, `IGNORE`.
 
 ## Dynamic Item Properties
 
-Properties can be customized per-item using the naming pattern:
-
-```
-item.<item_name>.<property>
-```
-
-### Available Item Properties
-
-| Property | Type |
-|----------|------|
-| `maxCountPerStack` | int |
-| `stackSize` | int |
-| `useCooldown` | float |
-| `damageMultiplier` | float |
-
-### Damage Multiplier Targeting
-
-```
-item.<item_name>.damageMultiplerPlayersInclude=@p,@a
-item.<item_name>.damageMultiplerPlayersExclude=@a
+```json
+{
+  "item.<item_name>.maxCountPerStack": 64,
+  "item.<item_name>.stackSize": 64,
+  "item.<item_name>.useCooldown": 0.0,
+  "item.<item_name>.damageMultiplier": 1.0,
+  "item.<item_name>.truncateItemCountShown": true,
+  "item.<any>.maxCountPerStack": 64,
+  "item.<item_name>.damageMultiplerPlayersInclude": "",
+  "item.<item_name>.damageMultiplerPlayersExclude": "@a",
+  "item.despawn_age": 6000,
+  "item.<item_name>_stackSize": 64
+}
 ```
 
-Entity selectors:
-- `@p` - Nearest player
-- `@a` - All players
-- `@e` - All entities
-- `@s` - Self
+Entity selectors: `@p` (nearest), `@a` (all), `@e` (all entities), `@s` (self).
 
 ## Food Properties
 
-```
-food.<item_name>.<property>
-```
-
-| Property | Type |
-|----------|------|
-| `nutrition` | int |
-| `saturation` | float |
-| `eattime` | float |
-| `alwaysEdible` | boolean |
-
-## Equipment Drop Chances
-
-```
-equipment.drop_chance=0.0
+```json
+{
+  "food.<item_name>.nutrition": 3,
+  "food.<item_name>.saturation": 0.5,
+  "food.<item_name>.eattime": 32,
+  "food.<item_name>.alwaysEdible": false
+}
 ```
 
-Sets the drop chance multiplier for all equipment (0.0 = never drop, 1.0 = normal chance).
+## Mob Caps
 
-## XP Block Drops
+Per-spawn-group overrides (e.g. `monster`, `creature`, `ambient`, `water_creature`, `misc`):
 
-Customize XP drops from blocks like ores:
-
+```json
+{
+  "mob_cap.chunk_area": 289,
+  "mob_cap.monster": 70,
+  "mob_cap.creature": 10
+}
 ```
-xpDroppingBlock.<block_name>.minExp=1
-xpDroppingBlock.<block_name>.maxExp=5
+
+---
+
+## Beacon
+
+```json
+{
+  "beacon.radius": "beaconLevel * 20 + 20",
+  "beacon.duration": "(9 + beaconLevel * 4) * 20",
+  "beacon.amplifier.<effect_name>": 0
+}
 ```
+
+The `beacon.amplifier.<effect_name>` key sets the amplifier for a specific status effect when the beacon is at level 4. Use the effect's registry name (e.g. `speed`, `haste`, `regeneration`).
+
+## Piston
+
+```json
+{
+  "piston.push_limit": 12
+}
+```
+
+---
+
+## Enchantments
+
+```json
+{
+  "enchantment.codec.weight": 1024,
+  "enchantment.codec.max_level": 255
+}
+```
+
+---
+
+## Firework Rockets
+
+```json
+{
+  "item.firework_rocket.flightTime": "flightDuration"
+}
+```
+
+Accepts an expression formula. Variables: `flightDuration` (the item's flight duration value).
+
+---
+
+## Entity Settings
+
+### Piglin AI
+
+```json
+{
+  "entity.piglin.admireGoldPriority": 10,
+  "entity.piglin.findGoldRadius": 8,
+  "entity.piglin.findGoldSpeedModifier": 1.0,
+  "entity.piglin.findGoldTimeTicks": 120,
+  "entity.piglin.refuseTradeCooldownTicks": 20,
+  "entity.piglin.tradeTime": 120
+}
+```
+
+### Snow Golem
+
+```json
+{
+  "snow_golem.shoot_cooldown": 20,
+  "snow_golem.shoot_range": 10.0,
+  "snow_golem.hurt_by_water": true
+}
+```
+
+### Damage Equipment Behavior
+
+Per-damage-type expressions for equipment durability loss:
+
+```json
+{
+  "entity.damageEquipmentBehavior<damage_type>.damageExpression": "max(1.0,amount/4.0)"
+}
+```
+
+Variables: `n` (number of slots), `amount` (damage amount).
+
+---
+
+## Player
+
+```json
+{
+  "entity.showFallDist": true,
+  "player.showDamageInfo": false,
+  "player.xp.dropFormula": "experienceLevel * 7"
+}
+```
+
+---
+
+## Sculk Blocks
+
+```json
+{
+  "sculk_minExp": 1,
+  "sculk_maxExp": 10
+}
+```
+
+---
+
+## Villager Settings
+
+```json
+{
+  "villager.item_pickup_range": 3,
+  "villager.item_sense_horizontal": 32,
+  "villager.item_sense_vertical": 16
+}
+```
+
+---
 
 ## Snowball Damage
 
-Configure snowball damage per entity type:
-
-```
-snowball.damage_to_<entity_type>=0
-```
-
-Example: `snowball.damage_to_player=1`
-
-## Mob Spawner Settings
-
-```
-mob_spawner.min_spawn_delay=200
-mob_spawner.max_spawn_delay=800
-mob_spawner.spawn_count=4
-mob_spawner.max_nearby_entities=6
-mob_spawner.required_player_range=16
-mob_spawner.spawn_range=4
+```json
+{
+  "snowball.damage_to_<entity_type>": 0
+}
 ```
 
 ## Potion Effect Durations
 
-```
-potion.<potion_name>.modifiers.<effect_name>.duration=<ticks>
+```json
+{
+  "potion.<potion_name>.modifiers.<effect_name>.duration": 900
+}
 ```
 
-Example: `potion.mundane.modifiers.minecraft:strength.duration=900`
+---
+
+## Brewing Stands
+
+```json
+{
+  "brewing_stands.brewTime": 400,
+  "brewing_stands.brewFuel": 20,
+  "brewing_stands.tick": true
+}
+```
+
+## Composter
+
+```json
+{
+  "composterCompostDelay": 20
+}
+```
+
+```json
+{
+  "maceSmashMinFallDistance": 1.5,
+  "maceSmashRequiresNotGliding": true,
+  "maceSmashFallThresholdLow": 3.0,
+  "maceSmashFallThresholdHigh": 8.0,
+  "maceSmashDamagePerBlockLow": 4.0,
+  "maceSmashDamagePerBlockMid": 2.0,
+  "maceSmashDamagePerBlockHigh": 1.0,
+  "maceSmashKnockbackRange": 3.5,
+  "maceSmashKnockbackPower": 0.7,
+  "maceSmashHeavyKnockbackMultiplier": 2.0
+}
+```
+
+### Damage Formula
+
+Bonus damage is computed as a piecewise linear function of fall distance:
+
+| Fall Distance | Damage |
+|---------------|--------|
+| ≤ `fallThresholdLow` | `damagePerBlockLow × fallDistance` |
+| ≤ `fallThresholdHigh` | `damagePerBlockLow × thresholdLow + damagePerBlockMid × (fall - thresholdLow)` |
+| > `fallThresholdHigh` | above + `damagePerBlockHigh × (fall - thresholdHigh)` |
+
+Density enchantment bonus is then added on top.
+
+---
+
+## Max Health Limit
+
+The vanilla `max_health` attribute is hard-capped at 1024. This setting raises that cap.
+
+```json
+{
+  "attribute.max_health.max": 1024.0
+}
+```
+
+Set higher to allow attribute values beyond 1024 via `/attribute ... base set ...` or modifiers.
+
+Example: to allow 100k HP, set `attribute.max_health.max=100000`.
+
+---
+
+## Explosions
+
+Per-explosive settings use the naming pattern `explosive.<name>_<property>` where `<name>` is the explosion source (e.g. `tnt`, `bed`, `respawn_anchor`, `tnt_minecart`).
+
+```json
+{
+  "explosive.<name>_explosionPower": 4.0,
+  "explosive.<name>_createFire": false,
+  "explosive.<name>_destroyBlocks": "vanilla",
+  "explosive.<name>_destroyBlocksLogic": "vanilla",
+  "explosive.<name>_damageEntities": true,
+  "explosive.<name>_damageEntitiesLogic": "vanilla",
+  "explosive.<name>_fixedDamage": 5.0,
+  "explosive.<name>_calcDamageMode": "vanilla",
+  "explosive.<name>_damageEntitiesInclude": "@e",
+  "explosive.<name>_damageEntitiesExclude": ""
+}
+```
+
+Special: `explosive.tnt_minecart.fixedPower=bool` — force TNT minecart explosion power from config instead of rail speed.
+
+---
+
+## Mob Spawner
+
+```json
+{
+  "mob_spawner.min_spawn_delay": 200,
+  "mob_spawner.max_spawn_delay": 800,
+  "mob_spawner.spawn_count": 4,
+  "mob_spawner.max_nearby_entities": 6,
+  "mob_spawner.required_player_range": 16,
+  "mob_spawner.spawn_range": 4
+}
+```
+
+---
+
+## Equipment Drop Chances
+
+```json
+{
+  "equipment.drop_chance": 1.0
+}
+```
+
+## XP Block Drops
+
+```json
+{
+  "xpDroppingBlock.<block_name>.minExp": 1,
+  "xpDroppingBlock.<block_name>.maxExp": 5
+}
+```
+
+## Snowball Damage
+
+```json
+{
+  "snowball.damage_to_<entity_type>": 0
+}
+```
+
+## Potion Effect Durations
+
+```json
+{
+  "potion.<potion_name>.modifiers.<effect_name>.duration": 900
+}
+```
+
+## Lava / Water Fluid
+
+```json
+{
+  "lavaFastPlayTickRate": 10,
+  "lavaNonFastPlayTickRate": 30,
+  "lavaFastPlayLevelDecreasePerBlock": 1,
+  "lavaNonFastPlayLevelDecreasePerBlock": 2,
+  "lavaFastPlayMaxFlowDist": 4,
+  "lavaNonFastPlayMaxFlowDist": 2,
+  "lavaRandomTick": true,
+  "stillLavaFluidLevel": 8,
+  "stillWaterFluidLevel": 8,
+  "waterTickRate": 5,
+  "waterLevelDecreasePerBlock": 1,
+  "waterMaxFlowDist": 4
+}
+```
+
+## Hunger / Regen
+
+```json
+{
+  "regen.fast_interval": 10,
+  "regen.slow_interval": 80,
+  "regen.starvation_interval": 80
+}
+```
+
+## Damage
+
+```json
+{
+  "damage.invulnerability_ticks": 20,
+  "damage.hurt_animation_ticks": 10
+}
+```
+
+## World Ticks
+
+```json
+{
+  "tickWeather": true,
+  "tickTime": true,
+  "tick_raids": true,
+  "sleep_never_skip": false,
+  "tickBlockEntities": true,
+  "tickWorldBorder": true
+}
+```
+
+---
+
+## Bug Fixes
+
+Each bugfix is gated by a boolean toggle (default `false` = off). Set to `true` to enable.
+
+| Key | Description |
+|-----|-------------|
+| `bugfix.BlockPos.enableOptimizedIterate` | Use optimized iteration over block positions |
+| `bugfix.BannedIpList.IPnormalization` | Normalize embedded IPv4 addresses in ban list |
+| `bugfix.BooleanModifier.correctXnorOp` | Fix incorrect XNOR boolean modifier behavior |
+| `bugfix.ChaseServer.copyPlayerListOnTeleport` | Copy player list before teleport to prevent concurrent modification |
+| `bugfix.Entity.clampAge` | Clamp entity age to valid range on load |
+| `bugfix.Entity.correctPistonMovement` | Fix piston movement calculations |
+| `bugfix.Entity.correctPistonVelocity` | Fix entity velocity when pushed by pistons |
+| `bugfix.ExecutorSampling.syncPut` | Synchronize activeExecutors map on put |
+| `bugfix.ExecutorSampling.syncKeySet` | Synchronize activeExecutors keySet view |
+| `bugfix.MobEntity.clampAmbientSoundChance` | Clamp ambient sound chance to valid range |
+| `bugfix.NbtByteArray.assertLength` | Validate NBT byte array lengths |
+| `bugfix.NbtIntArray.assertLength` | Validate NBT int array lengths |
+| `bugfix.NbtLongArray.assertLength` | Validate NBT long array lengths |
+| `bugfix.NbtType.OfFixedType.assertLength` | Validate fixed-size NBT type array counts |
+| `bugfix.PacketApplyBatcher.limit` | Max queued packets before rejecting (default: `Integer.MAX_VALUE`) |
+| `bugfix.PacketByteBuf.assertSize` | Validate collection sizes when reading packets |
+| `bugfix.PacketInflater.assertLength` | Validate uncompressed packet size |
+| `bugfix.RconClient.resetBufferedStreamProperly` | Reset buffered stream on reconnect |
+| `bugfix.RconClient.setTimeout` | Apply socket timeout on RCON connect |
+| `bugfix.ServerPlayerEntity.savePlayerDataOnDeath` | Save player data immediately on death |
+| `bugfix.block.retainBlockEntityComponents` | Retain block entity components in drops |
+| `bugfix.experienceOrbNoOverflow` | Prevent XP orb count overflow |
+| `bugfix.minecart.correctPushAwayFromMinecart` | Fix minecart collision push direction |
+| `bugfix.tnt_minecart.skipRailDetonation` | Skip TNT minecart rail detonation |
+| `bugfix.PathNode.properHash` | Fix path node hash calculation |
+| `bugfix.RegistryKey.accurateHashCode` | Fix RegistryKey hashCode accuracy |
+| `bugfix.RegistryKey.equalWithObjectOverload` | Fix RegistryKey equals with Object overload |
+| `bugfix.RconListener.useCOWArrayList` | Use copy-on-write ArrayList for RCON listener |
+| `bugfix.ServerNetworkIo.DelayingChannelInboundHandler.useConcurrentMap` | Use ConcurrentHashMap for channel handler |
+| `bugfix.Vec2f.accurateHashCode` | Fix Vec2f hashCode accuracy |
+| `bugfix.Vec2f.equalWithObjectOverload` | Fix Vec2f equals with Object overload |
+
+---
+
+## Server Player Toggles
+
+Toggle individual player tick behaviors:
+
+```json
+{
+  "tickPlayer": true,
+  "tickFallStartPos": true,
+  "tickSculkShriekerWarningManager": true,
+  "tickVehicleInLavaRiding": true
+}
+```
+
+---
+
+## Miscellaneous
+
+```json
+{
+  "allowPlaceSameFluidAndBlock": true,
+  "attribute_swap_fix.enabled": false,
+  "commands.forceRandomTick": false,
+  "equipment.drop_chance": 1.0
+}
+```
