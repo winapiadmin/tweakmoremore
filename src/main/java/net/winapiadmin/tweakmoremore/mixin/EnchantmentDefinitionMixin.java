@@ -18,29 +18,24 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Enchantment.Definition.class)
 public class EnchantmentDefinitionMixin {
 
-    @Mutable
-    @Shadow
-    @Final
-    public static MapCodec<Enchantment.Definition> CODEC;
+    @Mutable @Shadow @Final public static MapCodec<Enchantment.Definition> CODEC;
 
     @Inject(method = "<clinit>", at = @At("TAIL"))
     private static void tweakCodec(CallbackInfo ci) {
-        CODEC = RecordCodecBuilder.mapCodec(
-                instance -> instance.group(
-                        RegistryCodecs.entryList(RegistryKeys.ITEM).fieldOf("supported_items").forGetter(Enchantment.Definition::supportedItems),
-                        RegistryCodecs.entryList(RegistryKeys.ITEM).optionalFieldOf("primary_items").forGetter(Enchantment.Definition::primaryItems),
+        CODEC = RecordCodecBuilder.mapCodec(instance
+                                            -> instance
+                                                   .group(RegistryCodecs.entryList(RegistryKeys.ITEM).fieldOf("supported_items").forGetter(Enchantment.Definition::supportedItems),
+                                                          RegistryCodecs.entryList(RegistryKeys.ITEM).optionalFieldOf("primary_items").forGetter(Enchantment.Definition::primaryItems),
 
-                        Codecs.rangedInt(1, Main.config.get("enchantment.codec.weight",1024)).fieldOf("weight").forGetter(Enchantment.Definition::weight),
+                                                          Codecs.rangedInt(1, Main.config.get("enchantment.codec.weight", 1024)).fieldOf("weight").forGetter(Enchantment.Definition::weight),
 
-                        // your change
-                        Codecs.rangedInt(1, Main.config.get("enchantment.codec.max_level",255)).fieldOf("max_level").forGetter(Enchantment.Definition::maxLevel),
+                                                          Codecs.rangedInt(1, Main.config.get("enchantment.codec.max_level", 255)).fieldOf("max_level").forGetter(Enchantment.Definition::maxLevel),
 
-                        Enchantment.Cost.CODEC.fieldOf("min_cost").forGetter(Enchantment.Definition::minCost),
-                        Enchantment.Cost.CODEC.fieldOf("max_cost").forGetter(Enchantment.Definition::maxCost),
+                                                          Enchantment.Cost.CODEC.fieldOf("min_cost").forGetter(Enchantment.Definition::minCost),
+                                                          Enchantment.Cost.CODEC.fieldOf("max_cost").forGetter(Enchantment.Definition::maxCost),
 
-                        Codecs.NON_NEGATIVE_INT.fieldOf("anvil_cost").forGetter(Enchantment.Definition::anvilCost),
-                        AttributeModifierSlot.CODEC.listOf().fieldOf("slots").forGetter(Enchantment.Definition::slots)
-                ).apply(instance, Enchantment.Definition::new)
-        );
+                                                          Codecs.NON_NEGATIVE_INT.fieldOf("anvil_cost").forGetter(Enchantment.Definition::anvilCost),
+                                                          AttributeModifierSlot.CODEC.listOf().fieldOf("slots").forGetter(Enchantment.Definition::slots))
+                                                   .apply(instance, Enchantment.Definition::new));
     }
 }

@@ -8,7 +8,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(Item.class)
 public interface ItemAccessor {
-    @Accessor("components")
-    @Mutable
-    void setComponents(ComponentMap components);
+    @Accessor("components") @Mutable void setComponents(ComponentMap components);
 }

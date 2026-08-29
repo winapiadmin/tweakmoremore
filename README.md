@@ -1,62 +1,51 @@
 # tweakmoremore
 
-This mod tweaks to (almost) every extent of Minecraft
+A highly configurable Fabric mod for Minecraft 1.21.11 that allows extensive tweaking of vanilla game mechanics through JSON configuration.
 
-Note that the settings are not pre-populated, except for items and blocks.
+## Features
 
-Also note that the config might change in an unpredictable way so the mod will crash the game if the config didn't support the supposed version.
+- **Mob Caps**: Configure spawn caps per mob type and chunk area
+- **Experience Drops**: Customizable XP amounts for blocks and bottles via formulas
+- **Enchantments**: Adjust weight, max level, costs, and slots
+- **Items**: Modify stack sizes, damage multipliers, cooldowns, and food properties
+- **Blocks**: Customize hardness, resistance, and other block properties
+- **Potions**: Modify potion effect durations
+- **Villagers**: Adjust item pickup range and sensing distances
+- **Snow Golems**: Configure shoot cooldown, range, and water weakness
+- **Piglins**: Customize trade times and gold admiring behavior
+- **Brewing Stands**: Change brew time, fuel consumption, and enable/disable
+- **Composter**: Adjust compost delay
+- **Hunger/Regeneration**: Modify food saturation and regeneration timings
+- **Damage**: Configure invulnerability ticks and hurt animation duration
+- **Mace Smash**: Configurable fall-distance thresholds, per-tier damage rates, knockback range/power, and gliding requirement
+- **Max Health Limit**: Raise the vanilla 1024 max-health cap
+- **Explosions**: Per-explosive power, fire, block/entity damage modes
+- **Bug Fixes**: Dozens of optional fixes for known vanilla bugs
 
-## What's in the mod
+## Requirements
 
-- Item stacks' size modification (partial credit: https://modrinth.com/mod/stackable127, will soon be modified)
-- Vanilla's fluids (not implemented for mods)
-- Block metadata (not working), experience drops
-- Food properties
-- Item cooldown, stack size
-- A little bit of ticking behavior
-- Inventory slots index
-- Player falling distance (works in client-side too!)
-- Custom player XP drop when dead instead of 100 XP points
-- Damage info to game log
-- Enchantment max level (networking only)
-- Explosion data: creating fire, power, damage players (or specific players), break blocks, enhanced logics if enabled
-- Composter compost delay
-- Brewing Stand brewing time
-- Prevent players from double-placing water when there's still water
-- Experience bottles XP drop
-- Per-world (for some of the configs) config
+- Fabric Loader 0.18.4+
+- Fabric API 0.140.2
+- Minecraft 1.21.11
 
-## Reporting issues
+## Configuration
 
-See the [issue tracker](https://github.com/winapiadmin/tweakmoremore/issues)
+Config file: `config/tweakmoremore.json` (or per-world `<world>/tweakmoremore.json`).
 
-## Installation instructions
-Every release has 2 ZIP files: one for JDK 25 (not backward compatible) and one for JDK 21 (always compatible)
+### Commands
 
-and each ZIP file has:
-1. devlibs folder for development JAR files
-2. libs (which contain the mod)
+| Command | Description |
+|---------|-------------|
+| `/rule` | List all configured rules |
+| `/rule <name>` | Show a rule's value |
+| `/rule <name> <value>` | Set a rule value |
+| `/forcetick <pos>` | Force a random tick on a block (requires `commands.forceRandomTick=true` and gamemasters permission) |
 
-**Pick: libs/tweakmoremore-\<version\>.jar**
+## Documentation
 
-1.
->[!CAUTION]
->Do **NOT** pick any development library (devlibs) or libs/tweakmoremore-\<version\>-sources.jar.
->
->TLDR: 
->- **Pick: libs/tweakmoremore-\<version\>.jar**
->- **NOT PICK**: 
->- - libs/tweakmoremore-\<version\>-sources.jar
->- - devlibs/tweakmoremore-\<version\>-dev.jar
->- - devlibs/tweakmoremore-\<version\>-sources.jar**
-2. 
->[!TIP]
->Check your JRE/JDK version.
->
->- MultiMC or whatever launcher other than the official one: check out the settings and run `java --version`.
->- Minecraft Launcher (offical): JRE 21.
+- **[Configuration Reference](docs/configuration.md)** — full list of config keys, types, and defaults
+- **[API Documentation](docs/api.md)** — architecture, core classes, and how to extend the mod
 
->[!CAUTION]
->Do **NOT** use build-artifacts-25-temurin.zip's JARs when your JRE/JDK version is 21 or older than 25.
+## Author
 
-I am **NOT** responsible for using unsupported versions of JRE/JDK and JAR files.
+winapiadmin

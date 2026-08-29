@@ -39,3 +39,7 @@ accessible field net/minecraft/block/AbstractBlock$Settings pistonBehavior Lnet/
 accessible field net/minecraft/block/AbstractBlock$Settings dynamicBounds Z
 accessible field net/minecraft/block/AbstractBlock settings Lnet/minecraft/block/AbstractBlock$Settings;
 accessible field net/minecraft/item/ItemStack components Lnet/minecraft/component/MergedComponentMap;
+accessible method net/minecraft/entity/mob/PiglinBrain doesNotHaveGoldInOffHand (Lnet/minecraft/entity/mob/PiglinEntity;)Z
+accessible field net/minecraft/entity/player/PlayerInventory selectedSlot I
+accessible class net/minecraft/server/ServerNetworkIo$DelayingChannelInboundHandler$Packet
+accessible class net/minecraft/server/ServerNetworkIo$DelayingChannelInboundHandler

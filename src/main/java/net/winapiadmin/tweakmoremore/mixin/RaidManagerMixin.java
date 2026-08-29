@@ -8,9 +8,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(RaidManager.class)
 public class RaidManagerMixin {
-  @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
-  public void tick(CallbackInfo ci) {
-    if (!(boolean)Main.config.get("tick_raids", true))
-      ci.cancel();
-  }
+    @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
+    public void tick(CallbackInfo ci) {
+        if (!(boolean)Main.config.get("tick_raids", true))
+            ci.cancel();
+    }
 }

@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "tweakmoremore-test",
+  "version": "1.0.0",
+  "name": "TweakMoreMore Game Tests",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": [
+      "net.winapiadmin.tweakmoremore.gametest.TweakGameTest"
+    ]
+  }
+}
