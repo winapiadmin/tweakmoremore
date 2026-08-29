@@ -33,7 +33,8 @@ public class RconListenerMixin {
 		)
 	)
 	private void createThreadSafeClientList(CallbackInfo ci) {
-		if (Main.config.get("bugfix.RconListener.useCOWArrayList", false)) {
+		Object val = Main.config.get("bugfix.RconListener.useCOWArrayList");
+		if (val instanceof Boolean b && b) {
 			this.clients = new CopyOnWriteArrayList<>();
 		}
 	}

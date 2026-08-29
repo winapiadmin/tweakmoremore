@@ -19,8 +19,9 @@ public class EntityPistonVelocityMixin {
 
 	@Inject(method = "move", at = @At("HEAD"))
 	private void onMoveHead(MovementType type, Vec3d movement, CallbackInfo ci) {
-                if (Main.config.get("bugfix.Entity.correctPistonMovement", false))
-    		    this.mixin$isPistonMove = type == MovementType.PISTON;
+		Object val = Main.config.get("bugfix.Entity.correctPistonMovement");
+		boolean enabled = val instanceof Boolean b && b;
+		this.mixin$isPistonMove = enabled && type == MovementType.PISTON;
 	}
 
 	@Redirect(method = "move", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setVelocity(Lnet/minecraft/util/math/Vec3d;)V", ordinal = 0))

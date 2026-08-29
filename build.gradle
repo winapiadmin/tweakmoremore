@@ -30,6 +30,13 @@ dependencies {
 
     implementation "net.objecthunter:exp4j:0.4.8"
     include "net.objecthunter:exp4j:0.4.8"
+
+    testImplementation "org.junit.jupiter:junit-jupiter:5.11.4"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+test {
+    useJUnitPlatform()
 }
 
 processResources {
@@ -93,7 +100,25 @@ publishing {
         // retrieving dependencies.
     }
 }
+fabricApi {
+	configureTests {
+		createSourceSet = true
+		modId = "tweakmoremore-test"
+		enableGameTests = false
+		eula = true
+	}
+}
+
 loom {
     accessWidenerPath = file("src/main/resources/tweakmoremore.accesswidener")
 
+    runs {
+        gametest {
+            server()
+            configName = "Game Test Server"
+            ideConfigGenerated = true
+            property "fabric-api.gametest", "true"
+            source "gametest"
+        }
+    }
 }

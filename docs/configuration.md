@@ -448,26 +448,6 @@ Special: `explosive.tnt_minecart.fixedPower=bool` — force TNT minecart explosi
 }
 ```
 
-## Snowball Damage
-
-```json
-{
-  "values": {
-    "snowball.damage_to_<entity_type>": 0
-  }
-}
-```
-
-## Potion Effect Durations
-
-```json
-{
-  "values": {
-    "potion.<potion_name>.modifiers.<effect_name>.duration": 900
-  }
-}
-```
-
 ## Lava / Water Fluid
 
 ```json

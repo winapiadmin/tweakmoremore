@@ -86,12 +86,18 @@ public class ModConfig {
             return defaultValue;
         }
 
+        if (defaultValue instanceof Boolean)
+            return (T)(v instanceof Boolean b ? b : v instanceof String s ? Boolean.parseBoolean(s) : defaultValue);
         if (defaultValue instanceof Integer)
-            return (T)Integer.valueOf(((Number)v).intValue());
+            return (T)Integer.valueOf(v instanceof Number n ? n.intValue() : Integer.parseInt(v.toString()));
         if (defaultValue instanceof Float)
-            return (T)Float.valueOf(((Number)v).floatValue());
+            return (T)Float.valueOf(v instanceof Number n ? n.floatValue() : Float.parseFloat(v.toString()));
         if (defaultValue instanceof Double)
-            return (T)Double.valueOf(((Number)v).doubleValue());
+            return (T)Double.valueOf(v instanceof Number n ? n.doubleValue() : Double.parseDouble(v.toString()));
+        if (defaultValue instanceof Long)
+            return (T)Long.valueOf(v instanceof Number n ? n.longValue() : Long.parseLong(v.toString()));
+        if (defaultValue instanceof String)
+            return (T)(v instanceof String ? v : String.valueOf(v));
 
         return (T)v;
     }

@@ -23,8 +23,8 @@ public class Main implements ModInitializer {
     static {
         try {
             config = ModConfig.read(FabricLoader.getInstance().getConfigDir().resolve("tweakmoremore.json"));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (Exception | NoClassDefFoundError ignored) {
+            // FabricLoader unavailable (e.g. unit tests). Re-initialized in onInitialize().
         }
     }
 
@@ -108,25 +108,44 @@ public class Main implements ModInitializer {
                                                                                                           return builder.buildFuture();
                                                                                                       })
 
-                                                                                                      .executes(ctx -> {
-                                                                                                          String name = StringArgumentType.getString(ctx, "name");
-                                                                                                          String rawValue = StringArgumentType.getString(ctx, "value");
+                                                                                                       .executes(ctx -> {
+                                                                                                           String name = StringArgumentType.getString(ctx, "name");
+                                                                                                           String rawValue = StringArgumentType.getString(ctx, "value");
 
-                                                                                                          // Infer type
-                                                                                                          Object parsed = infer(rawValue, name);
-                                                                                                          config.set(name, parsed);
+                                                                                                           try {
+                                                                                                               Object parsed = infer(rawValue, name);
+                                                                                                               config.set(name, parsed);
+                                                                                                               ctx.getSource().sendFeedback(() -> Text.literal("Rule[" + name + "]=" + config.get(name)), true);
+                                                                                                           } catch (NumberFormatException e) {
+                                                                                                               ctx.getSource().sendError(Text.literal("Invalid number for " + name + ": " + rawValue));
+                                                                                                               return 0;
+                                                                                                           } catch (IllegalArgumentException e) {
+                                                                                                               ctx.getSource().sendError(Text.literal(e.getMessage()));
+                                                                                                               return 0;
+                                                                                                           }
 
-                                                                                                          ctx.getSource().sendFeedback(() -> Text.literal("Rule[" + name + "]=" + config.get(name)), true);
-
-                                                                                                          return 1;
-                                                                                                      })))));
+                                                                                                           return 1;
+                                                                                                       })))));
     }
 
     static Object infer(String s, String key) {
         Object oldValue = config.get(key);
 
-        if (oldValue instanceof Boolean)
+        if (oldValue == null) {
+            if (s == null)
+                return null;
+            if (s.equalsIgnoreCase("true"))
+                return true;
+            if (s.equalsIgnoreCase("false"))
+                return false;
+            return s;
+        }
+
+        if (oldValue instanceof Boolean) {
+            if (!s.equalsIgnoreCase("true") && !s.equalsIgnoreCase("false"))
+                throw new IllegalArgumentException("Expected true or false for " + key + ", got: " + s);
             return Boolean.parseBoolean(s);
+        }
         if (oldValue instanceof Integer)
             return Integer.parseInt(s);
         if (oldValue instanceof Float)
@@ -135,24 +154,6 @@ public class Main implements ModInitializer {
             return Double.parseDouble(s);
         if (oldValue instanceof Long)
             return Long.parseLong(s);
-
-        if (s == null)
-            return null;
-
-        if (s.equalsIgnoreCase("true"))
-            return true;
-        if (s.equalsIgnoreCase("false"))
-            return false;
-
-        try {
-            return Integer.parseInt(s);
-        } catch (NumberFormatException ignored) {
-        }
-
-        try {
-            return Float.parseFloat(s);
-        } catch (NumberFormatException ignored) {
-        }
 
         return s;
     }

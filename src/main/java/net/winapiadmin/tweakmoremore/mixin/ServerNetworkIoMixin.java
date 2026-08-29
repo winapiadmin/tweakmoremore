@@ -2,7 +2,6 @@ package net.winapiadmin.tweakmoremore.mixin;
 
 
 import net.winapiadmin.tweakmoremore.Main;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import net.minecraft.server.ServerNetworkIo;
 import org.objectweb.asm.Opcodes;
@@ -27,18 +26,9 @@ public class ServerNetworkIoMixin {
 	@Shadow
 	private int extraDelay;
 
-	@Shadow
-	@Final
-	@Mutable
-	private List<ServerNetworkIo.DelayingChannelInboundHandler.Packet> packets;
+	@Unique
+	private boolean mixin$useConcurrentMap;
 
-@Unique
-private static boolean useConcurrentMap() {
-    return Main.config.get(
-        "bugfix.ServerNetworkIo.DelayingChannelInboundHandler.useConcurrentMap",
-        false
-    );
-}
 	@Inject(
 		method = "<init>(II)V",
 		at = @At(
@@ -48,10 +38,9 @@ private static boolean useConcurrentMap() {
 			shift = At.Shift.AFTER
 		)
 	)
-	private void noArrayList(CallbackInfo ci) {
-		if (useConcurrentMap()) {
-			this.packets = null;
-		}
+	private void snapshotUseConcurrentMap(CallbackInfo ci) {
+		Object val = Main.config.get("bugfix.ServerNetworkIo.DelayingChannelInboundHandler.useConcurrentMap");
+		this.mixin$useConcurrentMap = val instanceof Boolean b && b;
 	}
 
 	@Inject(
@@ -60,7 +49,7 @@ private static boolean useConcurrentMap() {
 		cancellable = true
 	)
 	private void onDelay(io.netty.channel.ChannelHandlerContext ctx, Object msg, CallbackInfo ci) {
-    if (!useConcurrentMap()) return;
+		if (!this.mixin$useConcurrentMap) return;
 		ServerNetworkIo.DelayingChannelInboundHandler.Packet packet =
 			new ServerNetworkIo.DelayingChannelInboundHandler.Packet(ctx, msg);
 		int delay = this.baseDelay + (int)(Math.random() * this.extraDelay);
@@ -74,7 +63,7 @@ private static boolean useConcurrentMap() {
 		cancellable = true
 	)
 	private void onForward(io.netty.util.Timeout timeout, CallbackInfo ci) {
-    if (!useConcurrentMap()) return;
+		if (!this.mixin$useConcurrentMap) return;
 		ci.cancel();
 	}
 }

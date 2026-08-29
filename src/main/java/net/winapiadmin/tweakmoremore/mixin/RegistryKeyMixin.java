@@ -17,11 +17,12 @@ public abstract class RegistryKeyMixin<T> {
 
 	@Shadow
 	public abstract Identifier getValue();
-    //@Overwrite
+	//@Overwrite
 	@Override
 	public boolean equals(Object obj) {
-		if (Main.config.get("bugfix.RegistryKey.equalWithObjectOverload", false)
-				|| Main.config.get("bugfix.RegistryKey.accurateHashCode", false))
+		Object eqVal = Main.config.get("bugfix.RegistryKey.equalWithObjectOverload");
+		Object hashVal = Main.config.get("bugfix.RegistryKey.accurateHashCode");
+		if ((eqVal instanceof Boolean b1 && b1) || (hashVal instanceof Boolean b2 && b2))
 		    return this == obj;
 		if (!(obj instanceof RegistryKey<?> other)) return false;
 		return Objects.equals(this.getRegistry(), other.getRegistry())
